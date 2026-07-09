@@ -828,13 +828,13 @@ struct CosmicClockWidget : ModuleWidget {
 		addChild(readout);
 
 		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(130.5f, 48)), module, CosmicClock::WARP_PARAM));
-		eclipse::addLabel(this, Vec(130.5f, 55), "WARP", eclipse::FINE_SIZE);
+		eclipse::addLabel(this, Vec(130.5f, 55), "WARP");
 		addParam(createParamCentered<CKSS>(mm2px(Vec(149.5f, 48)), module, CosmicClock::MODE_PARAM));
-		eclipse::addLabel(this, Vec(149.5f, 55), "TIME", eclipse::FINE_SIZE);
+		eclipse::addLabel(this, Vec(149.5f, 55), "TIME");
 		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(130.5f, 68)), module, CosmicClock::ORB_PARAM));
-		eclipse::addLabel(this, Vec(130.5f, 75), "ORB", eclipse::FINE_SIZE);
+		eclipse::addLabel(this, Vec(130.5f, 75), "ORB");
 		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(149.5f, 68)), module, CosmicClock::RATE_PARAM));
-		eclipse::addLabel(this, Vec(149.5f, 75), "RATE", eclipse::FINE_SIZE);
+		eclipse::addLabel(this, Vec(149.5f, 75), "RATE");
 
 		// Framed patch bay: one row per planet -- glyph, wave out,
 		// EOC trigger -- with the MAIN pair below the separator. The five
@@ -842,8 +842,8 @@ struct CosmicClockWidget : ModuleWidget {
 		static const float BAY_GLYPH_X = 171.5f;
 		static const float BAY_WAVE_X = 183.f;
 		static const float BAY_EOC_X = 194.f;
-		eclipse::addLabel(this, Vec(BAY_WAVE_X, 22.5f), "WAVE", eclipse::FINE_SIZE, eclipse::DIM_COLOR);
-		eclipse::addLabel(this, Vec(BAY_EOC_X, 22.5f), "EOC", eclipse::FINE_SIZE, eclipse::DIM_COLOR);
+		eclipse::addLabel(this, Vec(BAY_WAVE_X, 22.5f), "WAVE");
+		eclipse::addLabel(this, Vec(BAY_EOC_X, 22.5f), "EOC");
 		for (int p = 0; p < NUM_BODIES; p++) {
 			float y = 29.5f + 9.7f * p;
 			PlanetGlyphLabel* glyph = new PlanetGlyphLabel;
@@ -854,7 +854,7 @@ struct CosmicClockWidget : ModuleWidget {
 			addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(BAY_WAVE_X, y)), module, CosmicClock::WAVE_OUTPUTS + p));
 			addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(BAY_EOC_X, y)), module, CosmicClock::EOC_OUTPUTS + p));
 		}
-		eclipse::addLabel(this, Vec(BAY_GLYPH_X, 118), "MAIN", eclipse::FINE_SIZE, eclipse::ACCENT_COLOR);
+		eclipse::addLabel(this, Vec(BAY_GLYPH_X, 118), "MAIN", eclipse::LABEL_SIZE, eclipse::ACCENT_COLOR);
 		addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(BAY_WAVE_X, 118)), module, CosmicClock::MAIN_OUTPUT));
 		addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(BAY_EOC_X, 118)), module, CosmicClock::MAINEOC_OUTPUT));
 	}

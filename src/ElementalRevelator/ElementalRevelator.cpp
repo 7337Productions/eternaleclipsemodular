@@ -466,7 +466,7 @@ struct ElementalRevelatorWidget : ModuleWidget {
 	// Filter/FX column center
 	static constexpr float FX_X = 139.5f;
 	// Patch bay column centers and jack/attenuverter pair offsets
-	static constexpr float BAY_XL = 172.5f, BAY_XR = 194.f;
+	static constexpr float BAY_XL = 175.f, BAY_XR = 196.5f;
 	static constexpr float JACK_DX = -4.8f, ATT_DX = 5.2f;
 
 	void addLabel(Vec mmPos, const std::string& text, float fontSize = eclipse::LABEL_SIZE,
@@ -494,7 +494,7 @@ struct ElementalRevelatorWidget : ModuleWidget {
 		// ===== Zone 1: pentagram =====
 		// Five points
 		addParam(createParamCentered<RoundBigBlackKnob>(mm2px(Vec(SPIRIT_X, SPIRIT_Y)), module, ElementalRevelator::SPIRIT_PARAM));
-		addLabel(Vec(SPIRIT_X, SPIRIT_Y - 8.5f), "SPIRIT");
+		addLabel(Vec(SPIRIT_X, SPIRIT_Y - 10.f), "SPIRIT");
 		addParam(createParamCentered<RoundBigBlackKnob>(mm2px(Vec(AIR_X, AIR_Y)), module, ElementalRevelator::AIR_PITCH_PARAM));
 		addLabel(Vec(AIR_X, AIR_Y + 8.8f), "AIR");
 		addParam(createParamCentered<RoundBigBlackKnob>(mm2px(Vec(WATER_X, WATER_Y)), module, ElementalRevelator::WATER_PITCH_PARAM));
@@ -510,27 +510,29 @@ struct ElementalRevelatorWidget : ModuleWidget {
 
 		// Per-element wavetable trimpots, on the ring beside their elements
 		addParam(createParamCentered<Trimpot>(mm2px(Vec(16.f, 70.f)), module, ElementalRevelator::AIR_WT_PARAM));
-		addLabel(Vec(16.f, 75.5f), "WT", eclipse::FINE_SIZE, eclipse::DIM_COLOR);
+		addLabel(Vec(16.f, 75.5f), "WT", eclipse::FINE_SIZE);
 		addParam(createParamCentered<Trimpot>(mm2px(Vec(104.f, 70.f)), module, ElementalRevelator::WATER_WT_PARAM));
-		addLabel(Vec(104.f, 75.5f), "WT", eclipse::FINE_SIZE, eclipse::DIM_COLOR);
+		addLabel(Vec(104.f, 75.5f), "WT", eclipse::FINE_SIZE);
 		addParam(createParamCentered<Trimpot>(mm2px(Vec(24.4f, 95.86f)), module, ElementalRevelator::EARTH_WT_PARAM));
-		addLabel(Vec(24.4f, 101.4f), "WT", eclipse::FINE_SIZE, eclipse::DIM_COLOR);
+		addLabel(Vec(24.4f, 101.4f), "WT", eclipse::FINE_SIZE);
 		addParam(createParamCentered<Trimpot>(mm2px(Vec(95.6f, 95.86f)), module, ElementalRevelator::FIRE_WT_PARAM));
-		addLabel(Vec(95.6f, 101.4f), "WT", eclipse::FINE_SIZE, eclipse::DIM_COLOR);
+		addLabel(Vec(95.6f, 101.4f), "WT", eclipse::FINE_SIZE);
 
 		// Modifier knobs on the ring at the midpoint angles
 		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(34.14f, 34.4f)), module, ElementalRevelator::SIGIL_PARAM));
-		addLabel(Vec(34.14f, 43.2f), "SIGIL");
+		addLabel(Vec(34.14f, 41.6f), "SIGIL");
 		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(85.86f, 34.4f)), module, ElementalRevelator::VEIL_PARAM));
-		addLabel(Vec(85.86f, 43.2f), "VEIL");
+		addLabel(Vec(85.86f, 41.6f), "VEIL");
 		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(18.15f, 83.6f)), module, ElementalRevelator::OFFERING_PARAM));
-		addLabel(Vec(18.15f, 92.4f), "OFFERING");
+		addLabel(Vec(18.15f, 90.8f), "OFFERING");
 		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(101.85f, 83.6f)), module, ElementalRevelator::RITE_PARAM));
-		addLabel(Vec(101.85f, 92.4f), "RITE");
+		addLabel(Vec(101.85f, 90.8f), "RITE");
 
 		// Daemon knob at the ring's bottom
 		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(60.f, 114.f)), module, ElementalRevelator::DAEMON_PARAM));
-		addLabel(Vec(60.f, 122.3f), "DAEMON", eclipse::LABEL_SIZE, eclipse::ACCENT_COLOR);
+		// Abyssal Harmonics seal red (label logo on the Church music page);
+		// the matching red rings live in the panel SVG.
+		addLabel(Vec(60.f, 123.f), "DAEMON", eclipse::LABEL_SIZE, nvgRGB(0xff, 0x00, 0x00));
 
 		// ===== Zone 2: filter/FX column =====
 		addParam(createParamCentered<RoundBigBlackKnob>(mm2px(Vec(FX_X, 28.f)), module, ElementalRevelator::OMEN_PARAM));
@@ -542,9 +544,9 @@ struct ElementalRevelatorWidget : ModuleWidget {
 		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(FX_X, 92.f)), module, ElementalRevelator::TIME_PARAM));
 		addLabel(Vec(FX_X, 100.8f), "TIME");
 		addParam(createParamCentered<RoundSmallBlackKnob>(mm2px(Vec(131.f, 110.f)), module, ElementalRevelator::FEED_PARAM));
-		addLabel(Vec(131.f, 115.7f), "FEED", eclipse::FINE_SIZE, eclipse::DIM_COLOR);
+		addLabel(Vec(131.f, 115.7f), "FEED");
 		addParam(createParamCentered<RoundSmallBlackKnob>(mm2px(Vec(148.f, 110.f)), module, ElementalRevelator::MIX_PARAM));
-		addLabel(Vec(148.f, 115.7f), "MIX", eclipse::FINE_SIZE, eclipse::DIM_COLOR);
+		addLabel(Vec(148.f, 115.7f), "MIX");
 
 		// ===== Zone 3: patch bay =====
 		static const float ROW_Y[8] = {26.f, 37.f, 48.f, 59.f, 70.f, 81.f, 92.f, 103.f};
@@ -574,9 +576,9 @@ struct ElementalRevelatorWidget : ModuleWidget {
 			{"RES", ElementalRevelator::RES_INPUT, ElementalRevelator::RES_ATT_PARAM},
 		};
 		for (int i = 0; i < 8; i++) {
-			addLabel(Vec(BAY_XL, ROW_Y[i] - 5.7f), LEFT[i].label, eclipse::FINE_SIZE, eclipse::DIM_COLOR);
+			addLabel(Vec(BAY_XL, ROW_Y[i] - 5.7f), LEFT[i].label);
 			addCvPair(BAY_XL, ROW_Y[i], LEFT[i].inputId, LEFT[i].attId, module);
-			addLabel(Vec(BAY_XR, ROW_Y[i] - 5.7f), RIGHT[i].label, eclipse::FINE_SIZE, eclipse::DIM_COLOR);
+			addLabel(Vec(BAY_XR, ROW_Y[i] - 5.7f), RIGHT[i].label);
 			addCvPair(BAY_XR, ROW_Y[i], RIGHT[i].inputId, RIGHT[i].attId, module);
 		}
 

@@ -357,7 +357,7 @@ struct SarosDisplay : TransparentWidget {
 		if (font) {
 			nvgFontFaceId(args.vg, font->handle);
 			nvgFontSize(args.vg, mm2px(2.6f));
-			nvgFillColor(args.vg, eclipse::DIM_COLOR);
+			nvgFillColor(args.vg, eclipse::LABEL_COLOR);
 			nvgTextAlign(args.vg, NVG_ALIGN_LEFT | NVG_ALIGN_BOTTOM);
 			nvgText(args.vg, mx + mm2px(0.5f), h - mm2px(0.6f), formatTime(duration).c_str(), NULL);
 			if (loop) {

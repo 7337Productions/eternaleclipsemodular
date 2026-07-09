@@ -206,9 +206,9 @@ struct PhaseNameLabel : TransparentWidget {
 		if (!font)
 			return;
 		nvgFontFaceId(args.vg, font->handle);
-		nvgFontSize(args.vg, eclipse::FINE_SIZE);
+		nvgFontSize(args.vg, eclipse::LABEL_SIZE);
 		nvgTextAlign(args.vg, NVG_ALIGN_CENTER | NVG_ALIGN_MIDDLE);
-		nvgFillColor(args.vg, eclipse::DIM_COLOR);
+		nvgFillColor(args.vg, eclipse::LABEL_COLOR);
 		nvgText(args.vg, box.size.x / 2.f, box.size.y / 2.f, PHASE_NAMES[idx], NULL);
 	}
 };
@@ -236,7 +236,9 @@ struct MoonPhaseDistortionWidget : ModuleWidget {
 		PhaseNameLabel* phaseName = new PhaseNameLabel;
 		phaseName->module = module;
 		phaseName->box.size = mm2px(Vec(38.f, 5.f));
-		phaseName->box.pos = mm2px(Vec(XC - 19.f, 44.f)).minus(Vec(0, mm2px(2.5f)));
+		// Centered between the display well's ring (bottom y=44.2) and the
+		// controls frame (top y=49.5)
+		phaseName->box.pos = mm2px(Vec(XC - 19.f, 47.f)).minus(Vec(0, mm2px(2.5f)));
 		addChild(phaseName);
 
 		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(X1, 56.f)), module, MoonPhaseDistortion::PHASE_PARAM));

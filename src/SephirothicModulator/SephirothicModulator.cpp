@@ -330,8 +330,8 @@ struct SephirothicModulatorWidget : ModuleWidget {
 
 		// Da'at matrix: 10 rows x 2 busses, full sephirah names beside the knobs
 		eclipse::addLabel(this, Vec(88.5f, 22.f), "DA'AT - THE GATE", eclipse::LABEL_SIZE, eclipse::ACCENT_COLOR);
-		eclipse::addLabel(this, Vec(93.5f, 27.f), "I", eclipse::FINE_SIZE, eclipse::DIM_COLOR);
-		eclipse::addLabel(this, Vec(103.5f, 27.f), "II", eclipse::FINE_SIZE, eclipse::DIM_COLOR);
+		eclipse::addLabel(this, Vec(93.5f, 27.f), "I");
+		eclipse::addLabel(this, Vec(103.5f, 27.f), "II");
 		for (int n = 0; n < NUM_NODES; n++) {
 			float y = 33.f + 8.f * n;
 			eclipse::addLabel(this, Vec(77.5f, y), NODE_NAMES[n], eclipse::LABEL_SIZE);
@@ -340,8 +340,8 @@ struct SephirothicModulatorWidget : ModuleWidget {
 		}
 		addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(93.5f, 114)), module, SephirothicModulator::BUS1_OUTPUT));
 		addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(103.5f, 114)), module, SephirothicModulator::BUS2_OUTPUT));
-		eclipse::addLabel(this, Vec(93.5f, 120.5f), "I", eclipse::FINE_SIZE, eclipse::ACCENT_COLOR);
-		eclipse::addLabel(this, Vec(103.5f, 120.5f), "II", eclipse::FINE_SIZE, eclipse::ACCENT_COLOR);
+		eclipse::addLabel(this, Vec(93.5f, 120.5f), "I", eclipse::LABEL_SIZE, eclipse::ACCENT_COLOR);
+		eclipse::addLabel(this, Vec(103.5f, 120.5f), "II", eclipse::LABEL_SIZE, eclipse::ACCENT_COLOR);
 	}
 
 	void appendContextMenu(Menu* menu) override {

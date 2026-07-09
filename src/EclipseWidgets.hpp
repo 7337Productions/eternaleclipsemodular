@@ -13,7 +13,7 @@ namespace eclipse {
 
 static const NVGcolor LABEL_COLOR = nvgRGB(0xff, 0xee, 0xb8);   // copper-flash cream
 static const NVGcolor ACCENT_COLOR = nvgRGB(0xff, 0xc4, 0x64);  // copper-bright
-static const NVGcolor DIM_COLOR = nvgRGB(0x9c, 0x6a, 0x3b);     // ash (blended solid)
+static const NVGcolor DIM_COLOR = nvgRGB(0x9c, 0x6a, 0x3b);     // ash -- glyphs/graphics only, never text
 
 // Type scale (px at 100% zoom). VCV Library review requires text readable at
 // 100% on a normal-DPI monitor; these sizes track VCV Fundamental's density.
