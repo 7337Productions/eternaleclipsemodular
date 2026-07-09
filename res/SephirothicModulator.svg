@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="111.76mm" height="128.5mm" viewBox="0 0 111.76 128.5">
   <!-- Panel background -->
-  <rect x="0" y="0" width="111.76" height="128.5" fill="#0c0604"/>
+  <rect x="0" y="0" width="111.76" height="128.5" fill="#000000"/>
 
   <!-- Header divider: hairlines fading outward from the chamber glyph -->
   <g stroke="#cd762b" stroke-width="0.3">

@@ -3,7 +3,7 @@
 ## 2.7.0 (2026-07-09)
 
 - Brand refresh: all panels move from amber-on-violet to the Church of
-  the Eternal Eclipse copper-on-abyss palette (warm near-black panels,
+  the Eternal Eclipse copper-on-abyss palette (pure black panels,
   copper-bright titles, cream labels, ash secondary text).
 - New ETERNAL ⊙ ECLIPSE brand mark flush against the bottom edge of
   every panel (eclipse sigil only on the 8HP Moon Phase Distortion).

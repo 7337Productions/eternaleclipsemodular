@@ -3,8 +3,8 @@
 
 using namespace rack;
 
-// Shared Eternal Eclipse panel style: copper-on-abyss (warm near-black #0c0604
-// panels, tiered copper/gold text), matching the Church of the Eternal Eclipse
+// Shared Eternal Eclipse panel style: copper-on-abyss (pure black panels,
+// tiered copper/gold text), matching the Church of the Eternal Eclipse
 // website (assets/css/tokens.css). Labels are runtime-drawn (Rack's SVG
 // renderer ignores <text> elements). Contrast rule carried from the site:
 // every text tier stays >= ~4:1 on the panel background; quietness comes from
