@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="40.64mm" height="128.5mm" viewBox="0 0 40.64 128.5">
+  <!-- Panel background -->
+  <rect x="0" y="0" width="40.64" height="128.5" fill="#131019"/>
+
+  <!-- Accent line under title -->
+  <line x1="6" y1="14" x2="34.64" y2="14" stroke="#e8a33d" stroke-width="0.35" stroke-opacity="0.6"/>
+
+  <!-- Display well behind the moon -->
+  <circle cx="20.32" cy="31" r="13.2" fill="#0c0a11" stroke="#2c2438" stroke-width="0.4"/>
+
+  <!-- Section frames -->
+  <!-- Controls -->
+  <rect x="2.5" y="49.5" width="35.64" height="36.5" rx="2" fill="#181420" stroke="#2c2438" stroke-width="0.4"/>
+  <!-- CV / IO area -->
+  <rect x="2.5" y="87" width="35.64" height="35.9" rx="2" fill="#100d17" stroke="#2c2438" stroke-width="0.4"/>
+</svg>

@@ -1,0 +1,7 @@
+build/
+dist/
+plugin.dll
+*.vcvplugin
+.claude/
+Rack-SDK/
+/DualOsc/
