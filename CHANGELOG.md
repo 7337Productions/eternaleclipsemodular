@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.6.2 (2026-07-09)
+
+- Elemental Revelator: pentagram drawn in gold (modifier corner-lines
+  stay violet), WT knobs are now trimpots seated on the ring beside
+  their elements, element glyphs redrawn in white inside the star's
+  arms with SPIRIT titled above its knob, and OMEN/CUTOFF enlarged to
+  match the oscillator pitch knobs.
+
 ## 2.6.1 (2026-07-09)
 
 - Elemental Revelator: panel rework — all ten knobs on one ring around
