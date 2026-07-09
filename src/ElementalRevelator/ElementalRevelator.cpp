@@ -452,14 +452,16 @@ constexpr float ElementalRevelator::MORPH_COEF[4];
 constexpr float ElementalRevelator::PAN_COEF[4];
 
 struct ElementalRevelatorWidget : ModuleWidget {
-	// Pentagram zone: five points on a circle, Golden-Dawn attribution
-	// (SPIRIT top, AIR upper-left, WATER upper-right, EARTH lower-left,
-	// FIRE lower-right). Centers in mm.
-	static constexpr float SPIRIT_X = 60.f, SPIRIT_Y = 30.f;
-	static constexpr float AIR_X = 22.f, AIR_Y = 57.6f;
-	static constexpr float WATER_X = 98.f, WATER_Y = 57.6f;
-	static constexpr float EARTH_X = 36.5f, EARTH_Y = 102.4f;
-	static constexpr float FIRE_X = 83.5f, FIRE_Y = 102.4f;
+	// Pentagram zone: all ten knobs sit on one ring (r=44 around 60,70),
+	// evenly spaced 36 degrees apart. Golden-Dawn attribution for the
+	// five points (SPIRIT top, AIR upper-left, WATER upper-right, EARTH
+	// lower-left, FIRE lower-right); the five modifiers take the
+	// midpoint angles, each wired to its inner pentagram corner.
+	static constexpr float SPIRIT_X = 60.f, SPIRIT_Y = 26.f;
+	static constexpr float AIR_X = 18.15f, AIR_Y = 56.4f;
+	static constexpr float WATER_X = 101.85f, WATER_Y = 56.4f;
+	static constexpr float EARTH_X = 34.14f, EARTH_Y = 105.6f;
+	static constexpr float FIRE_X = 85.86f, FIRE_Y = 105.6f;
 	static constexpr float CENTER_X = 60.f, CENTER_Y = 70.f;
 	// Filter/FX column center
 	static constexpr float FX_X = 139.5f;
@@ -507,28 +509,28 @@ struct ElementalRevelatorWidget : ModuleWidget {
 			ElementalRevelator::SPIRIT_MODE_PARAM, ElementalRevelator::SPIRIT_LIGHT));
 
 		// Per-element wavetable knobs
-		addParam(createParamCentered<RoundSmallBlackKnob>(mm2px(Vec(10.5f, 63.5f)), module, ElementalRevelator::AIR_WT_PARAM));
-		addLabel(Vec(10.5f, 69.f), "WT", eclipse::FINE_SIZE, eclipse::DIM_COLOR);
-		addParam(createParamCentered<RoundSmallBlackKnob>(mm2px(Vec(109.5f, 63.5f)), module, ElementalRevelator::WATER_WT_PARAM));
-		addLabel(Vec(109.5f, 69.f), "WT", eclipse::FINE_SIZE, eclipse::DIM_COLOR);
-		addParam(createParamCentered<RoundSmallBlackKnob>(mm2px(Vec(24.f, 94.5f)), module, ElementalRevelator::EARTH_WT_PARAM));
-		addLabel(Vec(24.f, 100.f), "WT", eclipse::FINE_SIZE, eclipse::DIM_COLOR);
-		addParam(createParamCentered<RoundSmallBlackKnob>(mm2px(Vec(96.f, 94.5f)), module, ElementalRevelator::FIRE_WT_PARAM));
-		addLabel(Vec(96.f, 100.f), "WT", eclipse::FINE_SIZE, eclipse::DIM_COLOR);
+		addParam(createParamCentered<RoundSmallBlackKnob>(mm2px(Vec(10.f, 72.f)), module, ElementalRevelator::AIR_WT_PARAM));
+		addLabel(Vec(10.f, 77.5f), "WT", eclipse::FINE_SIZE, eclipse::DIM_COLOR);
+		addParam(createParamCentered<RoundSmallBlackKnob>(mm2px(Vec(110.f, 72.f)), module, ElementalRevelator::WATER_WT_PARAM));
+		addLabel(Vec(110.f, 77.5f), "WT", eclipse::FINE_SIZE, eclipse::DIM_COLOR);
+		addParam(createParamCentered<RoundSmallBlackKnob>(mm2px(Vec(44.f, 92.f)), module, ElementalRevelator::EARTH_WT_PARAM));
+		addLabel(Vec(44.f, 97.5f), "WT", eclipse::FINE_SIZE, eclipse::DIM_COLOR);
+		addParam(createParamCentered<RoundSmallBlackKnob>(mm2px(Vec(76.f, 92.f)), module, ElementalRevelator::FIRE_WT_PARAM));
+		addLabel(Vec(76.f, 97.5f), "WT", eclipse::FINE_SIZE, eclipse::DIM_COLOR);
 
-		// Modulation knobs at the corners and sides
-		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(18.f, 26.f)), module, ElementalRevelator::SIGIL_PARAM));
-		addLabel(Vec(18.f, 34.8f), "SIGIL");
-		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(102.f, 26.f)), module, ElementalRevelator::VEIL_PARAM));
-		addLabel(Vec(102.f, 34.8f), "VEIL");
-		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(12.f, 84.f)), module, ElementalRevelator::OFFERING_PARAM));
-		addLabel(Vec(12.f, 92.8f), "OFFERING");
-		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(108.f, 84.f)), module, ElementalRevelator::RITE_PARAM));
-		addLabel(Vec(108.f, 92.8f), "RITE");
+		// Modifier knobs on the ring at the midpoint angles
+		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(34.14f, 34.4f)), module, ElementalRevelator::SIGIL_PARAM));
+		addLabel(Vec(34.14f, 43.2f), "SIGIL");
+		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(85.86f, 34.4f)), module, ElementalRevelator::VEIL_PARAM));
+		addLabel(Vec(85.86f, 43.2f), "VEIL");
+		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(18.15f, 83.6f)), module, ElementalRevelator::OFFERING_PARAM));
+		addLabel(Vec(18.15f, 92.4f), "OFFERING");
+		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(101.85f, 83.6f)), module, ElementalRevelator::RITE_PARAM));
+		addLabel(Vec(101.85f, 92.4f), "RITE");
 
-		// Daemon knob at the bottom center
-		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(60.f, 113.f)), module, ElementalRevelator::DAEMON_PARAM));
-		addLabel(Vec(60.f, 121.3f), "DAEMON", eclipse::LABEL_SIZE, eclipse::ACCENT_COLOR);
+		// Daemon knob at the ring's bottom
+		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(60.f, 114.f)), module, ElementalRevelator::DAEMON_PARAM));
+		addLabel(Vec(60.f, 122.3f), "DAEMON", eclipse::LABEL_SIZE, eclipse::ACCENT_COLOR);
 
 		// ===== Zone 2: filter/FX column =====
 		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(FX_X, 28.f)), module, ElementalRevelator::OMEN_PARAM));
