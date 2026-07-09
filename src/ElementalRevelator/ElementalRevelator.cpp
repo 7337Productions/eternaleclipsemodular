@@ -489,7 +489,7 @@ struct ElementalRevelatorWidget : ModuleWidget {
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
 		// Title
-		eclipse::addHeader(this, 106.68f, "E L E M E N T A L   R E V E L A T O R", "THE FIVEFOLD FLAME");
+		eclipse::addHeader(this, 106.68f, "E L E M E N T A L   R E V E L A T O R");
 
 		// ===== Zone 1: pentagram =====
 		// Five points

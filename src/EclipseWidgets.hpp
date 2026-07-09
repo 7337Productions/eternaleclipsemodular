@@ -20,7 +20,6 @@ static const NVGcolor DIM_COLOR = nvgRGB(0x9c, 0x6a, 0x3b);     // ash (blended 
 // FINE_SIZE is the floor -- nothing on a panel goes smaller.
 static const float TITLE_SIZE = 12.f;
 static const float LABEL_SIZE = 9.f;
-static const float SUBTITLE_SIZE = 9.f;
 static const float FINE_SIZE = 7.f;
 
 struct PanelLabel : TransparentWidget {
@@ -51,14 +50,11 @@ inline void addLabel(Widget* parent, Vec mmPos, const std::string& text,
 	parent->addChild(label);
 }
 
-// Standard header block: title at y=7.3, subtitle at y=11.8, sized for the
-// divider at y=14.0 in the panel SVG. Every module uses this geometry.
-// The subtitle is the module's mythos epithet; the brand mark lives at the
-// bottom edge of the panel SVG.
-inline void addHeader(Widget* parent, float centerX, const std::string& title,
-                      const std::string& subtitle) {
+// Standard header block: title at y=7.3, sized for the chamber-glyph divider
+// at y=10.8 in the panel SVG. Every module uses this geometry. The brand mark
+// lives at the bottom edge of the panel SVG.
+inline void addHeader(Widget* parent, float centerX, const std::string& title) {
 	addLabel(parent, Vec(centerX, 7.3f), title, TITLE_SIZE, ACCENT_COLOR);
-	addLabel(parent, Vec(centerX, 11.8f), subtitle, SUBTITLE_SIZE, DIM_COLOR);
 }
 
 } // namespace eclipse

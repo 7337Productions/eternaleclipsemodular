@@ -11,8 +11,9 @@
   divider: Saros crescent, Cosmic Clock sun, Moon Phase half-disc,
   Liminal Vast dotted circle, Sephirothic Modulator concave diamond,
   Elemental Revelator triangle.
-- Header subtitles are now per-module mythos epithets; the brand name
-  moved to the bottom mark.
+- The "ETERNAL ECLIPSE" header subtitle is retired — the brand name
+  moved to the bottom mark, leaving a clean title with the glyph
+  divider tucked beneath it.
 - Corner brackets on section frames, echoing the Church card motif.
 
 ## 2.6.2 (2026-07-09)

@@ -285,7 +285,7 @@ struct SephirothicModulatorWidget : ModuleWidget {
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
-		eclipse::addHeader(this, 55.88f, "S E P H I R O T H I C   M O D U L A T O R", "THE TREE BENEATH THE VEIL");
+		eclipse::addHeader(this, 55.88f, "S E P H I R O T H I C   M O D U L A T O R");
 
 		TreeGlow* treeGlow = new TreeGlow;
 		treeGlow->module = module;
