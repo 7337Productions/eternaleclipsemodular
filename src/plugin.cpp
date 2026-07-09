@@ -4,6 +4,7 @@ Plugin* pluginInstance;
 
 void init(Plugin* p) {
 	pluginInstance = p;
+	p->addModel(modelElementalRevelator);
 	p->addModel(modelMoonPhaseDistortion);
 	p->addModel(modelLiminalVast);
 	p->addModel(modelSaros);

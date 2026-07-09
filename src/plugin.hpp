@@ -4,6 +4,7 @@
 using namespace rack;
 
 extern Plugin* pluginInstance;
+extern Model* modelElementalRevelator;
 extern Model* modelMoonPhaseDistortion;
 extern Model* modelLiminalVast;
 extern Model* modelSaros;

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="213.36mm" height="128.5mm" viewBox="0 0 213.36 128.5">
+  <!-- Panel background -->
+  <rect x="0" y="0" width="213.36" height="128.5" fill="#131019"/>
+
+  <!-- Accent line under the single centered header -->
+  <line x1="4" y1="14" x2="209.36" y2="14" stroke="#e8a33d" stroke-width="0.35" stroke-opacity="0.6"/>
+
+  <!-- Section frames -->
+  <rect x="3.5" y="18" width="114.5" height="104.9" rx="2" fill="#181420" stroke="#2c2438" stroke-width="0.4"/>
+  <rect x="121.5" y="18" width="36" height="104.9" rx="2" fill="#181420" stroke="#2c2438" stroke-width="0.4"/>
+  <rect x="161" y="18" width="48.9" height="104.9" rx="2" fill="#181420" stroke="#2c2438" stroke-width="0.4"/>
+
+  <!-- Pentagram: outer circle through the five point-knobs, the star
+       (SPIRIT top, AIR upper-left, WATER upper-right, EARTH lower-left,
+       FIRE lower-right), and the inner circle around the SPIRIT latch -->
+  <circle cx="60" cy="70" r="44" fill="none" stroke="#e8a33d" stroke-width="0.35" stroke-opacity="0.35"/>
+  <g stroke="#4c4170" stroke-width="0.65" stroke-opacity="0.9" fill="none">
+    <path d="M 60 30 L 83.5 102.4 L 22 57.6 L 98 57.6 L 36.5 102.4 Z"/>
+  </g>
+  <circle cx="60" cy="70" r="9" fill="none" stroke="#4c4170" stroke-width="0.65" stroke-opacity="0.9"/>
+
+  <!-- Alchemical element glyphs -->
+  <g stroke="#e8a33d" stroke-width="0.3" stroke-opacity="0.45" fill="none">
+    <!-- Air: upward triangle, barred -->
+    <path d="M 11 45.1 L 8.5 49.4 L 13.5 49.4 Z"/>
+    <line x1="9.4" y1="47.9" x2="12.6" y2="47.9"/>
+    <!-- Water: downward triangle -->
+    <path d="M 109 49.9 L 106.5 45.6 L 111.5 45.6 Z"/>
+    <!-- Earth: downward triangle, barred -->
+    <path d="M 25 112.6 L 22.5 108.3 L 27.5 108.3 Z"/>
+    <line x1="23.4" y1="109.8" x2="26.6" y2="109.8"/>
+    <!-- Fire: upward triangle -->
+    <path d="M 95 108.3 L 92.5 112.6 L 97.5 112.6 Z"/>
+  </g>
+
+  <!-- Filter/FX column constellation -->
+  <g stroke="#4c4170" stroke-width="0.65" stroke-opacity="0.9">
+    <line x1="139.5" y1="50" x2="139.5" y2="70"/>
+    <line x1="139.5" y1="92" x2="131" y2="110"/>
+    <line x1="139.5" y1="92" x2="148" y2="110"/>
+  </g>
+
+  <!-- Patch bay output separator -->
+  <line x1="163" y1="107" x2="207.9" y2="107" stroke="#2c2438" stroke-width="0.4"/>
+</svg>

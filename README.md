@@ -7,6 +7,25 @@ Module sources live in per-module folders under `src/`; shared panel styling is 
 
 ## Modules
 
+### Elemental Revelator
+
+![Elemental Revelator](docs/images/ElementalRevelator.png)
+
+Four-element wavetable synth voice. AIR, WATER, EARTH, and FIRE oscillators sit at
+the points of a pentagram, each with its own pitch knob and WT wavetable-position
+knob; OFFERING sets the scan character for all four, from smooth morphing to hard
+stepped wave switching. SIGIL cross-modulates around the elemental ring
+(AIR→WATER→FIRE→EARTH→AIR, PM left / FM right, wavefolding at the extremes) and
+RITE ring-modulates the opposing pairs (AIR×FIRE, WATER×EARTH). VEIL spreads detune
+and stereo width. Engaging the SPIRIT switch at the pentagram's center summons the
+fifth element: the four tunings become a chromatic 4-voice chord — AIR stays live as
+the root — and the SPIRIT knob scrolls 24 voicings. The DAEMON knob calls one of 72
+daemons (eight banks of nine), each a complete voice configuration, crossfaded
+smoothly and scannable by CV; a 64-step OMEN knob dials deterministic variations.
+The voice runs through a classic 4-pole ladder lowpass (CUTOFF/RES, self-oscillates)
+into a stereo delay/diffusion processor with a frequency shifter in the feedback
+path (TIME/FEED/MIX). Sixteen CV inputs with attenuverters cover every gesture.
+
 ### Moon Phase Distortion
 
 ![Moon Phase Distortion](docs/images/MoonPhaseDistortion.png)
