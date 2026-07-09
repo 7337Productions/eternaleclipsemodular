@@ -38,11 +38,11 @@ static const char* ASPECT_NAMES[NUM_ASPECTS] = {"CNJ", "SXT", "SQR", "TRI", "OPP
 
 // Chord/readout colors per aspect, muted to sit in the panel palette
 static const NVGcolor ASPECT_COLOR[NUM_ASPECTS] = {
-	{{{0.95f, 0.93f, 0.98f, 1.f}}}, // conjunction: white
+	{{{1.00f, 0.93f, 0.72f, 1.f}}}, // conjunction: cream
 	{{{0.37f, 0.68f, 0.62f, 1.f}}}, // sextile: teal
 	{{{0.85f, 0.36f, 0.29f, 1.f}}}, // square: ember
 	{{{0.61f, 0.55f, 0.85f, 1.f}}}, // trine: violet
-	{{{0.91f, 0.64f, 0.24f, 1.f}}}, // opposition: amber
+	{{{1.00f, 0.77f, 0.39f, 1.f}}}, // opposition: copper-bright
 };
 
 // Low-precision lunar longitude (~1.5 deg): mean longitude plus the largest
@@ -812,7 +812,7 @@ struct CosmicClockWidget : ModuleWidget {
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
-		eclipse::addHeader(this, 101.6f, "C O S M I C   C L O C K");
+		eclipse::addHeader(this, 101.6f, "C O S M I C   C L O C K", "THE WHEEL OF HOURS");
 
 		CosmicWheel* wheel = new CosmicWheel;
 		wheel->module = module;

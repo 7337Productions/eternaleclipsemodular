@@ -166,7 +166,7 @@ struct MoonDisplay : TransparentWidget {
 		// Shadow disc
 		nvgBeginPath(args.vg);
 		nvgCircle(args.vg, c.x, c.y, R);
-		nvgFillColor(args.vg, nvgRGB(0x1c, 0x17, 0x27));
+		nvgFillColor(args.vg, nvgRGB(0x1c, 0x12, 0x08));
 		nvgFill(args.vg);
 
 		// Lit region
@@ -182,15 +182,15 @@ struct MoonDisplay : TransparentWidget {
 			// Terminator, bottom back to top
 			nvgBezierTo(args.vg, ctrlX, c.y + R, ctrlX, c.y - R, c.x, c.y - R);
 			nvgClosePath(args.vg);
-			nvgFillColor(args.vg, nvgRGB(0xe8, 0xd9, 0xb0));
+			nvgFillColor(args.vg, nvgRGB(0xff, 0xee, 0xb8));
 			nvgFill(args.vg);
 		}
 
-		// Amber rim
+		// Copper rim
 		nvgBeginPath(args.vg);
 		nvgCircle(args.vg, c.x, c.y, R);
 		nvgStrokeWidth(args.vg, mm2px(0.35f));
-		nvgStrokeColor(args.vg, nvgRGBA(0xe8, 0xa3, 0x3d, 0xb0));
+		nvgStrokeColor(args.vg, nvgRGBA(0xff, 0x91, 0x29, 0xb0));
 		nvgStroke(args.vg);
 	}
 };
@@ -225,7 +225,7 @@ struct MoonPhaseDistortionWidget : ModuleWidget {
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
-		eclipse::addHeader(this, XC, "M O O N");
+		eclipse::addHeader(this, XC, "M O O N", "THE HOLLOW SUN");
 
 		MoonDisplay* display = new MoonDisplay;
 		display->module = module;

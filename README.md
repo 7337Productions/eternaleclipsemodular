@@ -3,7 +3,10 @@
 VCV Rack 2 plugin by Eternal Eclipse. Licensed GPL-3.0-or-later.
 
 Module sources live in per-module folders under `src/`; shared panel styling is in
-`src/EclipseWidgets.hpp` (dark violet panels, amber accents, runtime-drawn labels).
+`src/EclipseWidgets.hpp` (copper-on-abyss: warm near-black panels, tiered copper/gold
+text, runtime-drawn labels — matching the Church of the Eternal Eclipse brand). Each
+panel carries its chamber glyph in the header divider and the ETERNAL ⊙ ECLIPSE brand
+mark flush against the bottom edge.
 
 ## Modules
 
@@ -93,8 +96,8 @@ cycle to cycle). Aspects between planets act as the mixer: MAIN sums every voice
 weighted by the live aspect intensities, and each voice has its own output plus an
 end-of-cycle trigger — no gates anywhere. The panel is a chart-of-the-moment zodiac
 wheel with hand-drawn glyphs, planet markers at true longitudes, aspect chords colored
-by type (conjunction white, sextile teal, square ember, trine violet, opposition
-amber), and a date/time + strongest-aspect readout. RATE scales all voices, ORB sets
+by type (conjunction cream, sextile teal, square ember, trine violet, opposition
+copper), and a date/time + strongest-aspect readout. RATE scales all voices, ORB sets
 aspect width, and TIME/WARP runs the real sky or time-lapse up to ×10⁸.
 
 All Eternal Eclipse audio modules are stereo.

@@ -1,5 +1,20 @@
 # Changelog
 
+## 2.7.0 (2026-07-09)
+
+- Brand refresh: all panels move from amber-on-violet to the Church of
+  the Eternal Eclipse copper-on-abyss palette (warm near-black panels,
+  copper-bright titles, cream labels, ash secondary text).
+- New ETERNAL ⊙ ECLIPSE brand mark flush against the bottom edge of
+  every panel (eclipse sigil only on the 8HP Moon Phase Distortion).
+- Each module gains a chamber glyph centered in a new fading header
+  divider: Saros crescent, Cosmic Clock sun, Moon Phase half-disc,
+  Liminal Vast dotted circle, Sephirothic Modulator concave diamond,
+  Elemental Revelator triangle.
+- Header subtitles are now per-module mythos epithets; the brand name
+  moved to the bottom mark.
+- Corner brackets on section frames, echoing the Church card motif.
+
 ## 2.6.2 (2026-07-09)
 
 - Elemental Revelator: pentagram drawn in gold (modifier corner-lines

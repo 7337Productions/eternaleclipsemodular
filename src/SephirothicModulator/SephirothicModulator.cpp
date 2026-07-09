@@ -227,7 +227,7 @@ struct TreeGlow : TransparentWidget {
 			Vec c = mm2px(NODE_POS[n]);
 			float r = mm2px(7.f);
 			NVGpaint paint = nvgRadialGradient(args.vg, c.x, c.y, mm2px(2.f), r,
-				nvgRGBAf(0.91f, 0.64f, 0.24f, 0.45f * g), nvgRGBAf(0.91f, 0.64f, 0.24f, 0.f));
+				nvgRGBAf(1.f, 0.77f, 0.39f, 0.45f * g), nvgRGBAf(1.f, 0.77f, 0.39f, 0.f));
 			nvgBeginPath(args.vg);
 			nvgCircle(args.vg, c.x, c.y, r);
 			nvgFillPaint(args.vg, paint);
@@ -285,7 +285,7 @@ struct SephirothicModulatorWidget : ModuleWidget {
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
-		eclipse::addHeader(this, 55.88f, "S E P H I R O T H I C   M O D U L A T O R");
+		eclipse::addHeader(this, 55.88f, "S E P H I R O T H I C   M O D U L A T O R", "THE TREE BENEATH THE VEIL");
 
 		TreeGlow* treeGlow = new TreeGlow;
 		treeGlow->module = module;

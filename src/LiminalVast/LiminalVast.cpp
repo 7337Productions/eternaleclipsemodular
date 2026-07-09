@@ -109,7 +109,7 @@ struct LiminalVastWidget : ModuleWidget {
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
-		eclipse::addHeader(this, XC, "L I M I N A L  V A S T");
+		eclipse::addHeader(this, XC, "L I M I N A L  V A S T", "WHAT LINGERS BETWEEN");
 
 		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(X1, 46.f)), module, LiminalVast::SIZE_PARAM));
 		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(XC, 46.f)), module, LiminalVast::DECAY_PARAM));

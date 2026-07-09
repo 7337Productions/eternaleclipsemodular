@@ -3,13 +3,17 @@
 
 using namespace rack;
 
-// Shared Eternal Eclipse panel style: dark violet panels (#131019), amber
-// accents, runtime-drawn labels (Rack's SVG renderer ignores <text> elements).
+// Shared Eternal Eclipse panel style: copper-on-abyss (warm near-black #0c0604
+// panels, tiered copper/gold text), matching the Church of the Eternal Eclipse
+// website (assets/css/tokens.css). Labels are runtime-drawn (Rack's SVG
+// renderer ignores <text> elements). Contrast rule carried from the site:
+// every text tier stays >= ~4:1 on the panel background; quietness comes from
+// size and tracking, never from dimming.
 namespace eclipse {
 
-static const NVGcolor LABEL_COLOR = nvgRGB(0xf2, 0xee, 0xfb);
-static const NVGcolor ACCENT_COLOR = nvgRGB(0xe8, 0xa3, 0x3d);
-static const NVGcolor DIM_COLOR = nvgRGB(0xa8, 0x9f, 0xbf);
+static const NVGcolor LABEL_COLOR = nvgRGB(0xff, 0xee, 0xb8);   // copper-flash cream
+static const NVGcolor ACCENT_COLOR = nvgRGB(0xff, 0xc4, 0x64);  // copper-bright
+static const NVGcolor DIM_COLOR = nvgRGB(0x9c, 0x6a, 0x3b);     // ash (blended solid)
 
 // Type scale (px at 100% zoom). VCV Library review requires text readable at
 // 100% on a normal-DPI monitor; these sizes track VCV Fundamental's density.
@@ -48,9 +52,11 @@ inline void addLabel(Widget* parent, Vec mmPos, const std::string& text,
 }
 
 // Standard header block: title at y=7.3, subtitle at y=11.8, sized for the
-// accent line at y=14.0 in the panel SVG. Every module uses this geometry.
+// divider at y=14.0 in the panel SVG. Every module uses this geometry.
+// The subtitle is the module's mythos epithet; the brand mark lives at the
+// bottom edge of the panel SVG.
 inline void addHeader(Widget* parent, float centerX, const std::string& title,
-                      const std::string& subtitle = "ETERNAL ECLIPSE") {
+                      const std::string& subtitle) {
 	addLabel(parent, Vec(centerX, 7.3f), title, TITLE_SIZE, ACCENT_COLOR);
 	addLabel(parent, Vec(centerX, 11.8f), subtitle, SUBTITLE_SIZE, DIM_COLOR);
 }

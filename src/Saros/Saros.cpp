@@ -292,7 +292,7 @@ struct SarosDisplay : TransparentWidget {
 		// Screen background
 		nvgBeginPath(args.vg);
 		nvgRect(args.vg, 0, 0, w, h);
-		nvgFillColor(args.vg, nvgRGB(0x0c, 0x0a, 0x11));
+		nvgFillColor(args.vg, nvgRGB(0x07, 0x03, 0x02));
 		nvgFill(args.vg);
 
 		float mx = marginX();
@@ -301,7 +301,7 @@ struct SarosDisplay : TransparentWidget {
 		float ch = h - 2.f * my;
 
 		// Grid: quarter verticals, mid horizontal
-		nvgStrokeColor(args.vg, nvgRGBA(0x2c, 0x24, 0x38, 0xb0));
+		nvgStrokeColor(args.vg, nvgRGBA(0x38, 0x21, 0x10, 0xb0));
 		nvgStrokeWidth(args.vg, mm2px(0.15f));
 		for (int i = 0; i <= 4; i++) {
 			float x = mx + cw * i / 4.f;
@@ -328,14 +328,14 @@ struct SarosDisplay : TransparentWidget {
 			else
 				nvgLineTo(args.vg, x, y);
 		}
-		nvgStrokeColor(args.vg, nvgRGBA(0xe8, 0xa3, 0x3d, 0xe6));
+		nvgStrokeColor(args.vg, nvgRGBA(0xff, 0xc4, 0x64, 0xe6));
 		nvgStrokeWidth(args.vg, mm2px(0.3f));
 		nvgStroke(args.vg);
 		// Fill under the curve
 		nvgLineTo(args.vg, mx + cw, my + ch);
 		nvgLineTo(args.vg, mx, my + ch);
 		nvgClosePath(args.vg);
-		nvgFillColor(args.vg, nvgRGBA(0xe8, 0xa3, 0x3d, 0x28));
+		nvgFillColor(args.vg, nvgRGBA(0xff, 0xc4, 0x64, 0x28));
 		nvgFill(args.vg);
 
 		// Playhead
@@ -344,12 +344,12 @@ struct SarosDisplay : TransparentWidget {
 		nvgBeginPath(args.vg);
 		nvgMoveTo(args.vg, px, my);
 		nvgLineTo(args.vg, px, my + ch);
-		nvgStrokeColor(args.vg, nvgRGBA(0xf5, 0xe4, 0xc0, 0x90));
+		nvgStrokeColor(args.vg, nvgRGBA(0xff, 0xee, 0xb8, 0x90));
 		nvgStrokeWidth(args.vg, mm2px(0.2f));
 		nvgStroke(args.vg);
 		nvgBeginPath(args.vg);
 		nvgCircle(args.vg, px, my + (1.f - pv) * ch, mm2px(0.7f));
-		nvgFillColor(args.vg, nvgRGB(0xf5, 0xe4, 0xc0));
+		nvgFillColor(args.vg, nvgRGB(0xff, 0xee, 0xb8));
 		nvgFill(args.vg);
 
 		// Readouts
@@ -385,7 +385,7 @@ struct SarosWidget : ModuleWidget {
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
-		eclipse::addHeader(this, XC, "S A R O S");
+		eclipse::addHeader(this, XC, "S A R O S", "THE LONG RETURN");
 
 		SarosDisplay* display = new SarosDisplay;
 		display->module = module;
