@@ -32,8 +32,9 @@
   <rect x="166.0" y="18" width="34.5" height="104.5" rx="2" fill="#140c06" stroke="#382110" stroke-width="0.4"/>
   <line x1="169.0" y1="112.5" x2="197.5" y2="112.5" stroke="#382110" stroke-width="0.4"/>
 
-  <!-- Zodiac wheel: 0 deg Aries at 9 o'clock, longitudes counterclockwise -->
-  <g fill="none" stroke="#cd762b" stroke-width="0.35" stroke-opacity="0.55">
+  <!-- Zodiac wheel: 0 deg Aries at 9 o'clock, longitudes counterclockwise;
+       rings in title gold like the Elemental Revelator pentagram -->
+  <g fill="none" stroke="#ffc464" stroke-width="0.35" stroke-opacity="0.9">
     <circle cx="60.0" cy="71.0" r="54.0"/>
     <circle cx="60.0" cy="71.0" r="44.5"/>
   </g>

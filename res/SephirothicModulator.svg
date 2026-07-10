@@ -26,8 +26,9 @@
   <rect x="67" y="18" width="43" height="104.5" rx="2" fill="#140c06" stroke="#382110" stroke-width="0.4"/>
 
   <!-- The 22 paths (jack centers: K 32,24 / Ch 52,34 / B 12,34 / Cs 52,52 /
-       G 12,52 / T 32,61 / N 52,79 / H 12,79 / Y 32,88 / M 32,102) -->
-  <g stroke="#6b4522" stroke-width="0.65" stroke-opacity="0.9">
+       G 12,52 / T 32,61 / N 52,79 / H 12,79 / Y 32,88 / M 32,102),
+       title gold like the Elemental Revelator pentagram -->
+  <g stroke="#ffc464" stroke-width="0.65" stroke-opacity="0.9">
     <line x1="32" y1="24" x2="52" y2="34"/>
     <line x1="32" y1="24" x2="12" y2="34"/>
     <line x1="32" y1="24" x2="32" y2="61"/>
