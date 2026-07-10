@@ -18,6 +18,9 @@ struct SinTable {
 		phase -= std::floor(phase);
 		float idx = phase * SIZE;
 		int i0 = (int)idx;
+		// phase just below 1.0 can round idx up to exactly SIZE
+		if (i0 < 0) i0 = 0;
+		else if (i0 >= SIZE) i0 = SIZE - 1;
 		float frac = idx - i0;
 		return table[i0] + frac * (table[i0 + 1] - table[i0]);
 	}

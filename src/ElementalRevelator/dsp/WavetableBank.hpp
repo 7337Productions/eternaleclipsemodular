@@ -60,6 +60,9 @@ struct WavetableBank {
 		phase -= std::floor(phase);
 		float idx = phase * size;
 		int i0 = (int)idx;
+		// phase just below 1.0 can round idx up to exactly size
+		if (i0 < 0) i0 = 0;
+		else if (i0 >= size) i0 = size - 1;
 		int i1 = (i0 + 1) % size;
 		float frac = idx - i0;
 

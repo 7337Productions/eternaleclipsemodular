@@ -24,9 +24,12 @@ inline float softClip(float x) {
 	return x * (27.f + x2) / (27.f + 9.f * x2);
 }
 
-// Clamp value to range
+// Clamp value to range. NaN-safe: a NaN input lands on lo instead of
+// passing through. clampf guards every CV entry point, so this is the
+// firewall that keeps NaN from upstream modules out of phase/index/state
+// math (where an (int) cast of NaN becomes INT_MIN and indexes wild).
 inline float clampf(float x, float lo, float hi) {
-	return x < lo ? lo : (x > hi ? hi : x);
+	return x >= lo ? (x <= hi ? x : hi) : lo;
 }
 
 // DC blocker filter

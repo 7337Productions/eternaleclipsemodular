@@ -157,18 +157,22 @@ struct ElementalRevelator : Module {
 	}
 
 	// OFFERING scan character: warp the wavetable position from smooth
-	// interpolation (s=0) toward stepped, hard-switched waves (s=1)
-	static float offeringQuantize(float m, float s) {
+	// interpolation (s=0) toward stepped, hard-switched waves (s=1).
+	// e is the crossfade band half-width at each cell midpoint -- it only
+	// depends on s, so the caller computes it once per sample (see
+	// offeringEdge) instead of per element.
+	static float offeringEdge(float s) {
+		// s=0 -> 0.5 (whole cell = identity), s=1 -> 0.01 (near-instant,
+		// but still click-free under morph CV)
+		return 0.5f * std::pow(1.f - s, 1.5f) + 0.01f;
+	}
+	static float offeringQuantize(float m, float s, float e) {
 		if (s <= 0.f)
 			return m;
 		const float N = 15.f; // NUM_WAVES - 1 cells
 		float w = m * N;
 		float cell = std::floor(w);
 		float frac = w - cell;
-		// Half-width of the crossfade band at each cell midpoint:
-		// s=0 -> 0.5 (whole cell = identity), s=1 -> 0.01 (near-instant,
-		// but still click-free under morph CV)
-		float e = 0.5f * std::pow(1.f - s, 1.5f) + 0.01f;
 		float t = clampf((frac - (0.5f - e)) / (2.f * e), 0.f, 1.f);
 		t = t * t * (3.f - 2.f * t); // smoothstep: steps land with glue
 		float q = (cell + t) / N;
@@ -353,12 +357,13 @@ struct ElementalRevelator : Module {
 		// ===== Offering + per-element wavetable position =====
 		float offering = clampf(params[OFFERING_PARAM].getValue()
 			+ inputs[OFFERING_INPUT].getVoltage() / 10.f * params[OFFERING_ATT_PARAM].getValue(), 0.f, 1.f);
+		float offeringE = offeringEdge(offering);
 		float morph[4];
 		for (int i = 0; i < 4; i++) {
 			float m = clampf(params[WT_PARAM[i]].getValue()
 				+ inputs[WT_INPUT[i]].getVoltage() / 10.f * params[WT_ATT[i]].getValue()
 				+ cfg.morphSpread * MORPH_COEF[i] + varMorph[i], 0.f, 1.f);
-			morph[i] = offeringQuantize(m, offering);
+			morph[i] = offeringQuantize(m, offering, offeringE);
 		}
 
 		// ===== Sigil: elemental ring cross-mod (1-sample feedback) =====
