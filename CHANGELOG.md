@@ -1,5 +1,23 @@
 # Changelog
 
+## 2.7.1 (2026-07-10)
+
+- Legibility pass at 100% zoom: dim ash text retired plugin-wide (it now
+  colors glyphs and graphics only) — patch-bay rows, column headers, and
+  small-knob labels all read at the standard 9px cream; label offsets now
+  track knob radius.
+- Elemental Revelator: DAEMON knob crowned with the Abyssal Harmonics
+  seal (double red ring, stamp-red label), pentagram ribbons in title
+  gold, patch bay recentered in its frame, output separator moved off
+  the bottom jack row.
+- Cosmic Clock zodiac rings and Sephirothic Modulator Tree of Life
+  paths brightened to the same title gold.
+- Moon Phase Distortion: phase name enlarged and centered between the
+  moon and the controls; Liminal Vast corona raised clear of its frame.
+- Elemental Revelator hardening: NaN CV from upstream modules can no
+  longer crash Rack (two out-of-bounds paths fixed) or permanently
+  silence the voice; wavetable edge-rounding guard; small CPU reduction.
+
 ## 2.7.0 (2026-07-09)
 
 - Brand refresh: all panels move from amber-on-violet to the Church of
