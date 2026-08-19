@@ -1,7 +1,7 @@
 {
   "slug": "EternalEclipseModular",
   "name": "Eternal Eclipse Modular",
-  "version": "2.7.1",
+  "version": "2.8.0",
   "license": "GPL-3.0-or-later",
   "brand": "Eternal Eclipse",
   "author": "Nicholas Bain",
@@ -47,6 +47,12 @@
       "name": "Cosmic Clock",
       "description": "Astrological waveform engine — nine planetary LFO voices shaped by the zodiac signs they transit and mixed by live aspects, with a chart-of-the-moment wheel, end-of-cycle triggers, and time warp up to x100,000,000.",
       "tags": ["LFO", "Visual"]
+    },
+    {
+      "slug": "CoronalAnnihilator",
+      "name": "Coronal Annihilator",
+      "description": "Stereo voice: a complex dual oscillator (CORE drives FLARE with FM, sync, wavefolding and phase warp) or an external stereo input, through an onboard neural amp model (.nam, one network per channel) and a saturating 4-pole lowpass with 12/24 dB slopes.",
+      "tags": ["Synth voice", "Oscillator", "Filter", "Distortion"]
     }
   ]
 }

@@ -10,4 +10,5 @@ void init(Plugin* p) {
 	p->addModel(modelSaros);
 	p->addModel(modelSephirothicModulator);
 	p->addModel(modelCosmicClock);
+	p->addModel(modelCoronalAnnihilator);
 }

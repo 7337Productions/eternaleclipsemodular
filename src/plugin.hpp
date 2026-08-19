@@ -10,3 +10,4 @@ extern Model* modelLiminalVast;
 extern Model* modelSaros;
 extern Model* modelSephirothicModulator;
 extern Model* modelCosmicClock;
+extern Model* modelCoronalAnnihilator;

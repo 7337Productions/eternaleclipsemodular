@@ -100,6 +100,26 @@ by type (conjunction cream, sextile teal, square ember, trine violet, opposition
 copper), and a date/time + strongest-aspect readout. RATE scales all voices, ORB sets
 aspect width, and TIME/WARP runs the real sky or time-lapse up to ×10⁸.
 
+### Coronal Annihilator
+
+![Coronal Annihilator](docs/images/CoronalAnnihilator.png)
+
+Stereo synth voice in three stages. The source is either the external stereo input (R
+normalled to L) or the onboard dual oscillator: CORE (sine, triangle or saw) drives
+FLARE through SURGE (linear through-zero or exponential FM), LOCK (soft or hard sync)
+and TRACK (FLARE follows CORE's V/oct), while FLARE itself is shaped by PLASMA
+(sine → triangle → saw → pulse morph), ARC (phase warp) and EJECTA (wavefolding).
+MIX balances the two and SPREAD places CORE left and FLARE right. The NEURAL stage
+plays a neural amp model (.nam file — load one from the panel button, the display,
+the context menu, or by dropping the file on the module) with one network per
+channel, DRIVE into it and LEVEL out; the menu offers a mono-network mode (half the
+CPU) and loudness normalization. UMBRA is a saturating 4-pole lowpass with resonance
+into self-oscillation, 12 or 24 dB slopes, CV and key tracking. Every main control
+has a CV input with an attenuverter. Models are not bundled — bring your own
+captures; the stage passes signal through until one is loaded. Note that the neural
+path adds a small block latency (32 samples, plus conversion when the model's rate
+differs from the engine's).
+
 All Eternal Eclipse audio modules are stereo.
 
 ## Building
@@ -112,3 +132,7 @@ The Makefile expects the SDK at `./Rack-SDK` (override with `RACK_DIR=<path>`).
 make -j8       # build
 make install   # package and install to your Rack user folder
 ```
+
+Third-party code vendored under `dep/`: NeuralAmpModelerCore (MIT, with a small
+documented patch — see `dep/NeuralAmpModelerCore/PATCHES.md`), Eigen (MPL2) and
+nlohmann/json (MIT). Their licenses ship with the plugin.

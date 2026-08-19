@@ -57,4 +57,14 @@ inline void addHeader(Widget* parent, float centerX, const std::string& title) {
 	addLabel(parent, Vec(centerX, 7.3f), title, TITLE_SIZE, ACCENT_COLOR);
 }
 
+// Two-position horizontal toggle (left = 0, right = 1), built from the
+// component library's three-position horizontal switch frames.
+struct CKSSHorizontal : app::SvgSwitch {
+	CKSSHorizontal() {
+		shadow->opacity = 0.0;
+		addFrame(Svg::load(asset::system("res/ComponentLibrary/CKSSThreeHorizontal_0.svg")));
+		addFrame(Svg::load(asset::system("res/ComponentLibrary/CKSSThreeHorizontal_2.svg")));
+	}
+};
+
 } // namespace eclipse
