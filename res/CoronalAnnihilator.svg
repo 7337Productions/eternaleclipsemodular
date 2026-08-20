@@ -40,18 +40,17 @@
   </g>
   <circle cx="56.5" cy="70" r="51" fill="#070302" stroke="#ffc464" stroke-width="0.5" stroke-opacity="0.85"/>
 
-  <!-- The sigil: chevron between the top points, two sides converging to
-       the bottom point, two crossing arms ending in tail hooks, and the
-       diamond nested between the sides. Controls sit on its nodes. -->
+  <!-- The sigil (per sketch): top bar CORE--FLARE with SURGE at its
+       midpoint; two long arms crossing at SPREAD, landing on PLASMA and
+       EJECTA; two sides converging on ARC and continuing into outward
+       curls; the diamond hanging from ARC onto MIX at the foot. -->
   <g fill="none" stroke="#ffc464" stroke-width="0.5" stroke-opacity="0.9">
-    <path d="M 23.5,36 L 56.5,55.4 L 89.5,36"/>
-    <line x1="23.5" y1="36" x2="56.5" y2="114"/>
-    <line x1="89.5" y1="36" x2="56.5" y2="114"/>
-    <line x1="23.5" y1="36" x2="80" y2="105.5"/>
-    <line x1="89.5" y1="36" x2="33" y2="105.5"/>
-    <path d="M 28.1,108.4 Q 23.2,111.0 22.4,106.0"/>
-    <path d="M 84.9,108.4 Q 89.8,111.0 90.6,106.0"/>
-    <path d="M 56.5,87.5 L 63.5,97.5 L 56.5,107.5 L 49.5,97.5 Z"/>
+    <line x1="26" y1="33" x2="87" y2="33"/>
+    <line x1="26" y1="33" x2="75" y2="82"/>
+    <line x1="87" y1="33" x2="38" y2="82"/>
+    <path d="M 26,33 L 63.9,97.0 Q 67.5,101.5 71.0,98.5 Q 73.0,96.5 70.5,94.8"/>
+    <path d="M 87,33 L 49.1,97.0 Q 45.5,101.5 42.0,98.5 Q 40.0,96.5 42.5,94.8"/>
+    <path d="M 56.5,90.5 L 60.5,96 L 56.5,101.5 L 52.5,96 Z"/>
   </g>
 
   <!-- Section frames: neural stage, umbra filter, patch bay -->
