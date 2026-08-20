@@ -34,48 +34,49 @@
 
   <!-- The eclipse: occluded disc with a stepped corona glow -->
   <g fill="none" stroke="#ffc464">
-    <circle cx="56.5" cy="70" r="54.9" stroke-width="2.0" stroke-opacity="0.05"/>
-    <circle cx="56.5" cy="70" r="53.2" stroke-width="1.6" stroke-opacity="0.10"/>
-    <circle cx="56.5" cy="70" r="51.9" stroke-width="1.0" stroke-opacity="0.22"/>
+    <circle cx="57.5" cy="69.9" r="56.9" stroke-width="2.0" stroke-opacity="0.05"/>
+    <circle cx="57.5" cy="69.9" r="55.2" stroke-width="1.6" stroke-opacity="0.10"/>
+    <circle cx="57.5" cy="69.9" r="53.9" stroke-width="1.0" stroke-opacity="0.22"/>
   </g>
-  <circle cx="56.5" cy="70" r="51" fill="#070302" stroke="#ffc464" stroke-width="0.5" stroke-opacity="0.85"/>
+  <circle cx="57.5" cy="69.9" r="53" fill="#070302" stroke="#ffc464" stroke-width="0.5" stroke-opacity="0.85"/>
 
   <!-- The sigil (per sketch): top bar CORE--FLARE with SURGE at its
        midpoint; two long arms crossing at SPREAD, landing on PLASMA and
        EJECTA; two sides converging on ARC and continuing into outward
-       curls; the diamond hanging from ARC onto MIX at the foot. -->
-  <g fill="none" stroke="#ffc464" stroke-width="0.5" stroke-opacity="0.9">
-    <line x1="26" y1="33" x2="87" y2="33"/>
-    <line x1="26" y1="33" x2="75" y2="82"/>
-    <line x1="87" y1="33" x2="38" y2="82"/>
-    <path d="M 26,33 L 63.9,97.0 Q 67.5,101.5 71.0,98.5 Q 73.0,96.5 70.5,94.8"/>
-    <path d="M 87,33 L 49.1,97.0 Q 45.5,101.5 42.0,98.5 Q 40.0,96.5 42.5,94.8"/>
-    <path d="M 56.5,90.5 L 60.5,96 L 56.5,101.5 L 52.5,96 Z"/>
+       curls; the diamond hanging from ARC onto MIX at the foot.
+       Abyssal Harmonics red, like the Elemental Revelator daemon seal. -->
+  <g fill="none" stroke="#ff0000" stroke-width="0.5" stroke-opacity="0.9">
+    <line x1="27.5" y1="36.3" x2="87.5" y2="36.3"/>
+    <line x1="27.5" y1="36.3" x2="78" y2="84"/>
+    <line x1="87.5" y1="36.3" x2="37" y2="84"/>
+    <path d="M 27.5,36.3 L 65.0,98.4 Q 68.5,103.0 72.0,100.0 Q 74.0,98.0 71.5,96.3"/>
+    <path d="M 87.5,36.3 L 50.0,98.4 Q 46.5,103.0 43.0,100.0 Q 41.0,98.0 43.5,96.3"/>
+    <path d="M 57.5,92 L 61.5,97.5 L 57.5,103 L 53.5,97.5 Z"/>
   </g>
 
   <!-- Section frames: neural stage, umbra filter, patch bay -->
-  <rect x="113" y="18" width="43" height="50" rx="2" fill="#140c06" stroke="#382110" stroke-width="0.4"/>
-  <rect x="113" y="71" width="43" height="51.9" rx="2" fill="#140c06" stroke="#382110" stroke-width="0.4"/>
-  <rect x="159" y="18" width="41.2" height="104.9" rx="2" fill="#140c06" stroke="#382110" stroke-width="0.4"/>
+  <rect x="118" y="18" width="40" height="50" rx="2" fill="#140c06" stroke="#382110" stroke-width="0.4"/>
+  <rect x="118" y="71" width="40" height="51.9" rx="2" fill="#140c06" stroke="#382110" stroke-width="0.4"/>
+  <rect x="162.2" y="18" width="38" height="104.9" rx="2" fill="#140c06" stroke="#382110" stroke-width="0.4"/>
 
   <!-- Neural model display bezel (name drawn at runtime) -->
-  <rect x="115.5" y="20.5" width="38" height="8" rx="1" fill="#070302" stroke="#cd762b" stroke-width="0.35" stroke-opacity="0.6"/>
+  <rect x="121" y="20.5" width="34" height="8" rx="1" fill="#070302" stroke="#cd762b" stroke-width="0.35" stroke-opacity="0.6"/>
   <!-- Umbra: cutoff -> resonance, slope -->
   <g stroke="#6b4522" stroke-width="0.65" stroke-opacity="0.9">
-    <line x1="127" y1="87" x2="147" y2="82"/>
-    <line x1="127" y1="87" x2="147" y2="100"/>
+    <line x1="132.5" y1="87" x2="150.5" y2="82"/>
+    <line x1="132.5" y1="87" x2="150.5" y2="100"/>
   </g>
 
   <!-- Patch bay output separator -->
-  <line x1="161" y1="109.2" x2="198.2" y2="109.2" stroke="#382110" stroke-width="0.4"/>
+  <line x1="164.2" y1="109.2" x2="198.2" y2="109.2" stroke="#382110" stroke-width="0.4"/>
 
   <!-- Corner brackets (Church card motif) -->
   <g fill="none" stroke="#cd762b" stroke-width="0.4" stroke-opacity="0.9">
-    <path d="M 113,20.4 L 113,18 L 115.4,18"/>
-    <path d="M 156,65.6 L 156,68 L 153.6,68"/>
-    <path d="M 113,73.4 L 113,71 L 115.4,71"/>
-    <path d="M 156,120.5 L 156,122.9 L 153.6,122.9"/>
-    <path d="M 159,20.4 L 159,18 L 161.4,18"/>
+    <path d="M 118,20.4 L 118,18 L 120.4,18"/>
+    <path d="M 158,65.6 L 158,68 L 155.6,68"/>
+    <path d="M 118,73.4 L 118,71 L 120.4,71"/>
+    <path d="M 158,120.5 L 158,122.9 L 155.6,122.9"/>
+    <path d="M 162.2,20.4 L 162.2,18 L 164.6,18"/>
     <path d="M 200.2,120.5 L 200.2,122.9 L 197.8,122.9"/>
   </g>
 

@@ -433,12 +433,12 @@ struct LoadButton : VCVButton {
 struct CoronalAnnihilatorWidget : ModuleWidget {
 	// Sigil anchor nodes inside the eclipse disc (disc center 56.5,70 r=51
 	// in the panel SVG): the top bar's endpoints and the vertical axis
-	static constexpr float SIG_LX = 26.f, SIG_RX = 87.f, SIG_TY = 33.f;
-	static constexpr float SIG_CX = 56.5f;
+	static constexpr float SIG_LX = 27.5f, SIG_RX = 87.5f, SIG_TY = 36.3f;
+	static constexpr float SIG_CX = 57.5f;
 	// Neural / Umbra column
-	static constexpr float NX_L = 124.f, NX_R = 145.f;
+	static constexpr float NX_L = 128.5f, NX_R = 147.5f;
 	// Patch bay column centers and jack/attenuverter pair offsets
-	static constexpr float BAY_XL = 170.f, BAY_XR = 190.f;
+	static constexpr float BAY_XL = 171.5f, BAY_XR = 190.9f;
 	static constexpr float JACK_DX = -4.8f, ATT_DX = 5.2f;
 
 	void addLabel(Vec mmPos, const std::string& text, float fontSize = eclipse::LABEL_SIZE,
@@ -472,45 +472,46 @@ struct CoronalAnnihilatorWidget : ModuleWidget {
 		// mode and TRACK flank SPREAD.
 		addParam(createParamCentered<RoundBigBlackKnob>(mm2px(Vec(SIG_LX, SIG_TY)), module, CoronalAnnihilator::CORE_PITCH_PARAM));
 		addLabel(Vec(SIG_LX, SIG_TY + 10.f), "CORE");
-		addLabel(Vec(41.f, 19.5f), "SIN  TRI  SAW", eclipse::FINE_SIZE);
-		addParam(createParamCentered<CKSSThreeHorizontal>(mm2px(Vec(41.f, 24.f)), module, CoronalAnnihilator::CORE_WAVE_PARAM));
+		addLabel(Vec(44.f, 24.4f), "SIN  TRI  SAW", eclipse::FINE_SIZE);
+		addParam(createParamCentered<CKSSThreeHorizontal>(mm2px(Vec(44.f, 28.9f)), module, CoronalAnnihilator::CORE_WAVE_PARAM));
+		addLabel(Vec(44.f, 33.3f), "WAVE");
 		addParam(createParamCentered<RoundBigBlackKnob>(mm2px(Vec(SIG_RX, SIG_TY)), module, CoronalAnnihilator::FLARE_PITCH_PARAM));
 		addLabel(Vec(SIG_RX, SIG_TY + 10.f), "FLARE");
-		addParam(createParamCentered<RoundSmallBlackKnob>(mm2px(Vec(95.f, 48.f)), module, CoronalAnnihilator::FLARE_FINE_PARAM));
-		addLabel(Vec(95.f, 54.2f), "FINE", eclipse::FINE_SIZE);
+		addParam(createParamCentered<RoundSmallBlackKnob>(mm2px(Vec(92.5f, 52.f)), module, CoronalAnnihilator::FLARE_FINE_PARAM));
+		addLabel(Vec(92.5f, 58.2f), "FINE", eclipse::FINE_SIZE);
 
-		addLabel(Vec(70.f, 19.5f), "LOCK");
-		addParam(createParamCentered<CKSSThreeHorizontal>(mm2px(Vec(70.f, 24.f)), module, CoronalAnnihilator::LOCK_PARAM));
-		addLabel(Vec(70.f, 28.6f), "OFF SOFT HARD", eclipse::FINE_SIZE);
+		addLabel(Vec(71.f, 24.4f), "OFF SOFT HARD", eclipse::FINE_SIZE);
+		addParam(createParamCentered<CKSSThreeHorizontal>(mm2px(Vec(71.f, 28.9f)), module, CoronalAnnihilator::LOCK_PARAM));
+		addLabel(Vec(71.f, 33.3f), "LOCK");
 		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(SIG_CX, SIG_TY)), module, CoronalAnnihilator::SURGE_PARAM));
-		addLabel(Vec(SIG_CX, 40.2f), "SURGE");
-		addLabel(Vec(39.f, 62.3f), "EXP", eclipse::FINE_SIZE);
-		addParam(createParamCentered<CKSS>(mm2px(Vec(39.f, 68.5f)), module, CoronalAnnihilator::FM_MODE_PARAM));
-		addLabel(Vec(39.f, 74.7f), "LIN", eclipse::FINE_SIZE);
-		addParam(createParamCentered<CKSS>(mm2px(Vec(74.f, 68.5f)), module, CoronalAnnihilator::TRACK_PARAM));
-		addLabel(Vec(74.f, 75.1f), "TRACK");
+		addLabel(Vec(SIG_CX, 43.5f), "SURGE");
+		addLabel(Vec(40.f, 63.3f), "EXP", eclipse::FINE_SIZE);
+		addParam(createParamCentered<CKSS>(mm2px(Vec(40.f, 69.5f)), module, CoronalAnnihilator::FM_MODE_PARAM));
+		addLabel(Vec(40.f, 75.7f), "LIN", eclipse::FINE_SIZE);
+		addParam(createParamCentered<CKSS>(mm2px(Vec(75.f, 69.5f)), module, CoronalAnnihilator::TRACK_PARAM));
+		addLabel(Vec(75.f, 76.1f), "TRACK");
 
-		addLabel(Vec(30.f, 60.2f), "V/OCT");
-		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(30.f, 54.f)), module, CoronalAnnihilator::CORE_VOCT_INPUT));
-		addLabel(Vec(83.f, 60.2f), "V/OCT");
-		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(83.f, 54.f)), module, CoronalAnnihilator::FLARE_VOCT_INPUT));
+		addLabel(Vec(31.f, 61.2f), "V/OCT");
+		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(31.f, 55.f)), module, CoronalAnnihilator::CORE_VOCT_INPUT));
+		addLabel(Vec(84.f, 61.2f), "V/OCT");
+		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(84.f, 55.f)), module, CoronalAnnihilator::FLARE_VOCT_INPUT));
 
-		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(SIG_CX, 63.5f)), module, CoronalAnnihilator::SPREAD_PARAM));
-		addLabel(Vec(SIG_CX, 70.7f), "SPREAD");
-		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(38.f, 82.f)), module, CoronalAnnihilator::PLASMA_PARAM));
-		addLabel(Vec(38.f, 89.2f), "PLASMA");
-		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(75.f, 82.f)), module, CoronalAnnihilator::EJECTA_PARAM));
-		addLabel(Vec(75.f, 89.2f), "EJECTA");
-		addLabel(Vec(SIG_CX, 77.9f), "ARC");
-		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(SIG_CX, 84.5f)), module, CoronalAnnihilator::ARC_PARAM));
-		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(SIG_CX, 106.5f)), module, CoronalAnnihilator::MIX_PARAM));
-		addLabel(Vec(SIG_CX, 113.7f), "MIX");
+		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(SIG_CX, 64.6f)), module, CoronalAnnihilator::SPREAD_PARAM));
+		addLabel(Vec(SIG_CX, 71.8f), "SPREAD");
+		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(37.f, 84.f)), module, CoronalAnnihilator::PLASMA_PARAM));
+		addLabel(Vec(37.f, 91.2f), "PLASMA");
+		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(78.f, 84.f)), module, CoronalAnnihilator::EJECTA_PARAM));
+		addLabel(Vec(78.f, 91.2f), "EJECTA");
+		addLabel(Vec(SIG_CX, 79.4f), "ARC");
+		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(SIG_CX, 86.f)), module, CoronalAnnihilator::ARC_PARAM));
+		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(SIG_CX, 108.f)), module, CoronalAnnihilator::MIX_PARAM));
+		addLabel(Vec(SIG_CX, 115.2f), "MIX");
 
 		// ===== Neural =====
 		NamModelDisplay* display = new NamModelDisplay;
 		display->module = module;
-		display->box.pos = mm2px(Vec(115.5f, 20.5f));
-		display->box.size = mm2px(Vec(38.f, 8.f));
+		display->box.pos = mm2px(Vec(121.f, 20.5f));
+		display->box.size = mm2px(Vec(34.f, 8.f));
 		addChild(display);
 		LoadButton* load = createWidgetCentered<LoadButton>(mm2px(Vec(NX_L, 37.f)));
 		load->module = module;
@@ -525,26 +526,26 @@ struct CoronalAnnihilatorWidget : ModuleWidget {
 		addLabel(Vec(NX_R, 62.2f), "LEVEL");
 
 		// ===== Umbra =====
-		addParam(createParamCentered<RoundBigBlackKnob>(mm2px(Vec(127.f, 87.f)), module, CoronalAnnihilator::CUTOFF_PARAM));
-		addLabel(Vec(127.f, 97.f), "CUTOFF", eclipse::LABEL_SIZE, eclipse::ACCENT_COLOR);
-		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(147.f, 82.f)), module, CoronalAnnihilator::RES_PARAM));
-		addLabel(Vec(147.f, 89.2f), "RES");
-		addParam(createParamCentered<Trimpot>(mm2px(Vec(147.f, 100.f)), module, CoronalAnnihilator::KEY_PARAM));
-		addLabel(Vec(147.f, 105.4f), "KEY");
-		addLabel(Vec(120.5f, 108.f), "12", eclipse::FINE_SIZE);
-		addParam(createParamCentered<eclipse::CKSSHorizontal>(mm2px(Vec(127.f, 108.f)), module, CoronalAnnihilator::SLOPE_PARAM));
-		addLabel(Vec(133.5f, 108.f), "24", eclipse::FINE_SIZE);
-		addLabel(Vec(127.f, 113.f), "SLOPE");
+		addParam(createParamCentered<RoundBigBlackKnob>(mm2px(Vec(132.5f, 87.f)), module, CoronalAnnihilator::CUTOFF_PARAM));
+		addLabel(Vec(132.5f, 97.f), "CUTOFF", eclipse::LABEL_SIZE, eclipse::ACCENT_COLOR);
+		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(150.5f, 82.f)), module, CoronalAnnihilator::RES_PARAM));
+		addLabel(Vec(150.5f, 89.2f), "RES");
+		addParam(createParamCentered<Trimpot>(mm2px(Vec(150.5f, 100.f)), module, CoronalAnnihilator::KEY_PARAM));
+		addLabel(Vec(150.5f, 105.4f), "KEY");
+		addLabel(Vec(126.f, 108.f), "12", eclipse::FINE_SIZE);
+		addParam(createParamCentered<eclipse::CKSSHorizontal>(mm2px(Vec(132.5f, 108.f)), module, CoronalAnnihilator::SLOPE_PARAM));
+		addLabel(Vec(139.f, 108.f), "24", eclipse::FINE_SIZE);
+		addLabel(Vec(132.5f, 113.f), "SLOPE");
 
 		// ===== Patch bay =====
 		addLabel(Vec(BAY_XL, 20.3f), "IN L");
 		addLabel(Vec(BAY_XR, 20.3f), "IN R");
 		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(BAY_XL, 26.f)), module, CoronalAnnihilator::INL_INPUT));
 		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(BAY_XR, 26.f)), module, CoronalAnnihilator::INR_INPUT));
-		addLabel(Vec(180.f, 32.6f), "SOURCE");
-		addLabel(Vec(172.5f, 38.f), "IN", eclipse::FINE_SIZE);
-		addParam(createParamCentered<eclipse::CKSSHorizontal>(mm2px(Vec(180.f, 38.f)), module, CoronalAnnihilator::SOURCE_PARAM));
-		addLabel(Vec(187.8f, 38.f), "OSC", eclipse::FINE_SIZE);
+		addLabel(Vec(181.2f, 32.6f), "SOURCE");
+		addLabel(Vec(173.7f, 38.f), "IN", eclipse::FINE_SIZE);
+		addParam(createParamCentered<eclipse::CKSSHorizontal>(mm2px(Vec(181.2f, 38.f)), module, CoronalAnnihilator::SOURCE_PARAM));
+		addLabel(Vec(189.f, 38.f), "OSC", eclipse::FINE_SIZE);
 
 		static const float ROW_Y[4] = {52.f, 66.f, 80.f, 94.f};
 		struct BayEntry {
