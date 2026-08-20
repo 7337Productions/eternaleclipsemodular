@@ -1,7 +1,7 @@
 {
   "slug": "EternalEclipseModular",
   "name": "Eternal Eclipse Modular",
-  "version": "2.7.1",
+  "version": "2.8.0",
   "license": "GPL-3.0-or-later",
   "brand": "Eternal Eclipse",
   "author": "Nicholas Bain",
@@ -27,7 +27,7 @@
     {
       "slug": "LiminalVast",
       "name": "Liminal Vast Reverb",
-      "description": "Lush stereo reverb with a modulated feedback delay network — from intimate rooms to the endless liminal vast.",
+      "description": "Lush stereo reverb with a modulated, diffused feedback delay network — from intimate rooms to the endless liminal vast, with infinite decay and freeze.",
       "tags": ["Reverb", "Effect"]
     },
     {

@@ -1,5 +1,23 @@
 # Changelog
 
+## 2.8.0 (2026-08-20)
+
+- Liminal Vast, the hugeness pass: diffusion allpasses inside the
+  feedback loop (DENSITY now thickens the tail itself, not just the
+  input), doubled maximum room size, a second slower LFO per line for
+  a washier shimmer, DECAY that pins to infinity at the top of the
+  knob, and a FREEZE button with gate input that holds the tail at
+  unity feedback. Note: existing patches will sound larger at the same
+  SIZE setting — the whole knob range grew upward.
+- Liminal Vast display is now alive (GitHub #1): the eclipse's corona
+  glows with the tail's energy and reaches with SIZE, and input
+  transients eject embers from the rim — count from DENSITY, travel
+  from SIZE, lifetime from DECAY; frozen embers orbit the disc.
+- Liminal Vast fixes: delay reads clamped for engine rates above
+  192 kHz, DENSITY sweeps through zero without a click, reset now
+  clears all modulation and smoothing state, and sample-rate changes
+  clear the tail instead of warping it.
+
 ## 2.7.1 (2026-07-10)
 
 - Legibility pass at 100% zoom: dim ash text retired plugin-wide (it now

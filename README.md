@@ -45,11 +45,14 @@ displays the current moon.
 ![Liminal Vast Reverb](docs/images/LiminalVast.png)
 
 Lush stereo reverb. Pre-delay and allpass diffusion
-feed an 8-line feedback delay network whose read taps are each modulated by their own
-detuned LFO, giving a chorused, shimmering tail. SIZE scales the network from intimate
-rooms to the endless liminal vast, DECAY is calibrated RT60 (0.2s–70s), with DENSITY,
-mod RATE/DEPTH, LO/HI CUT, and MIX shaping the character. CV over size, decay, and mix;
-right input normalled to left.
+feed an 8-line feedback delay network with diffusion allpasses inside the loop, each
+read tap modulated by two detuned LFOs for a chorused, washy, shimmering tail. SIZE
+scales the network from intimate rooms to the endless liminal vast, DECAY is
+calibrated RT60 (0.2s to ∞ at the top of the knob), and FREEZE — button or gate —
+holds the tail forever. DENSITY, mod RATE/DEPTH, LO/HI CUT, and MIX shape the
+character; CV over size, decay, and mix; right input normalled to left. The eclipse
+on the panel is alive: its corona glows with the tail's energy and input transients
+eject embers from the rim.
 
 ### Saros
 
