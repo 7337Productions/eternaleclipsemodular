@@ -32,25 +32,35 @@
     <line x1="102.77" y1="9.63" x2="103.01" y2="9.39" stroke-width="0.25"/>
   </g>
 
-  <!-- Section frames: oscillators, neural stage, umbra filter, patch bay -->
-  <rect x="3" y="18" width="107" height="104.9" rx="2" fill="#140c06" stroke="#382110" stroke-width="0.4"/>
+  <!-- The eclipse: occluded disc with a stepped corona glow -->
+  <g fill="none" stroke="#ffc464">
+    <circle cx="56.5" cy="70" r="54.9" stroke-width="2.0" stroke-opacity="0.05"/>
+    <circle cx="56.5" cy="70" r="53.2" stroke-width="1.6" stroke-opacity="0.10"/>
+    <circle cx="56.5" cy="70" r="51.9" stroke-width="1.0" stroke-opacity="0.22"/>
+  </g>
+  <circle cx="56.5" cy="70" r="51" fill="#070302" stroke="#ffc464" stroke-width="0.5" stroke-opacity="0.85"/>
+
+  <!-- The sigil: chevron between the top points, two sides converging to
+       the bottom point, two crossing arms ending in tail hooks, and the
+       diamond nested between the sides. Controls sit on its nodes. -->
+  <g fill="none" stroke="#ffc464" stroke-width="0.5" stroke-opacity="0.9">
+    <path d="M 23.5,36 L 56.5,55.4 L 89.5,36"/>
+    <line x1="23.5" y1="36" x2="56.5" y2="114"/>
+    <line x1="89.5" y1="36" x2="56.5" y2="114"/>
+    <line x1="23.5" y1="36" x2="80" y2="105.5"/>
+    <line x1="89.5" y1="36" x2="33" y2="105.5"/>
+    <path d="M 28.1,108.4 Q 23.2,111.0 22.4,106.0"/>
+    <path d="M 84.9,108.4 Q 89.8,111.0 90.6,106.0"/>
+    <path d="M 56.5,87.5 L 63.5,97.5 L 56.5,107.5 L 49.5,97.5 Z"/>
+  </g>
+
+  <!-- Section frames: neural stage, umbra filter, patch bay -->
   <rect x="113" y="18" width="43" height="50" rx="2" fill="#140c06" stroke="#382110" stroke-width="0.4"/>
   <rect x="113" y="71" width="43" height="51.9" rx="2" fill="#140c06" stroke="#382110" stroke-width="0.4"/>
   <rect x="159" y="18" width="41.2" height="104.9" rx="2" fill="#140c06" stroke="#382110" stroke-width="0.4"/>
 
   <!-- Neural model display bezel (name drawn at runtime) -->
   <rect x="115.5" y="20.5" width="38" height="8" rx="1" fill="#070302" stroke="#cd762b" stroke-width="0.35" stroke-opacity="0.6"/>
-
-  <!-- Constellation: CORE feeds FLARE through LOCK and SURGE; FLARE is shaped by PLASMA, EJECTA, ARC -->
-  <g stroke="#6b4522" stroke-width="0.65" stroke-opacity="0.9">
-    <line x1="17" y1="35" x2="38" y2="67"/>
-    <line x1="17" y1="35" x2="59" y2="67"/>
-    <line x1="38" y1="67" x2="59" y2="35"/>
-    <line x1="59" y1="67" x2="59" y2="35"/>
-    <line x1="59" y1="35" x2="101" y2="35"/>
-    <line x1="101" y1="35" x2="101" y2="67"/>
-    <line x1="101" y1="67" x2="101" y2="99"/>
-  </g>
   <!-- Umbra: cutoff -> resonance, slope -->
   <g stroke="#6b4522" stroke-width="0.65" stroke-opacity="0.9">
     <line x1="127" y1="87" x2="147" y2="82"/>
@@ -62,8 +72,6 @@
 
   <!-- Corner brackets (Church card motif) -->
   <g fill="none" stroke="#cd762b" stroke-width="0.4" stroke-opacity="0.9">
-    <path d="M 3,20.4 L 3,18 L 5.4,18"/>
-    <path d="M 110,120.5 L 110,122.9 L 107.6,122.9"/>
     <path d="M 113,20.4 L 113,18 L 115.4,18"/>
     <path d="M 156,65.6 L 156,68 L 153.6,68"/>
     <path d="M 113,73.4 L 113,71 L 115.4,71"/>
