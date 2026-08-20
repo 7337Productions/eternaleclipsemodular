@@ -46,12 +46,12 @@
        curls; the diamond hanging from ARC onto MIX at the foot.
        Abyssal Harmonics red, like the Elemental Revelator daemon seal. -->
   <g fill="none" stroke="#ff0000" stroke-width="0.5" stroke-opacity="0.9">
-    <line x1="27.5" y1="36.3" x2="87.5" y2="36.3"/>
-    <line x1="27.5" y1="36.3" x2="78" y2="84"/>
-    <line x1="87.5" y1="36.3" x2="37" y2="84"/>
-    <path d="M 27.5,36.3 L 65.0,98.4 Q 68.5,103.0 72.0,100.0 Q 74.0,98.0 71.5,96.3"/>
-    <path d="M 87.5,36.3 L 50.0,98.4 Q 46.5,103.0 43.0,100.0 Q 41.0,98.0 43.5,96.3"/>
-    <path d="M 57.5,92 L 61.5,97.5 L 57.5,103 L 53.5,97.5 Z"/>
+    <line x1="27.5" y1="39.7" x2="87.5" y2="39.7"/>
+    <line x1="27.5" y1="39.7" x2="78" y2="87.4"/>
+    <line x1="87.5" y1="39.7" x2="37" y2="87.4"/>
+    <path d="M 27.5,39.7 L 65.0,101.8 Q 68.5,106.4 72.0,103.4 Q 74.0,101.4 71.5,99.7"/>
+    <path d="M 87.5,39.7 L 50.0,101.8 Q 46.5,106.4 43.0,103.4 Q 41.0,101.4 43.5,99.7"/>
+    <path d="M 57.5,95.4 L 61.5,100.9 L 57.5,106.4 L 53.5,100.9 Z"/>
   </g>
 
   <!-- Section frames: neural stage, umbra filter, patch bay -->

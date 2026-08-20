@@ -433,7 +433,7 @@ struct LoadButton : VCVButton {
 struct CoronalAnnihilatorWidget : ModuleWidget {
 	// Sigil anchor nodes inside the eclipse disc (disc center 56.5,70 r=51
 	// in the panel SVG): the top bar's endpoints and the vertical axis
-	static constexpr float SIG_LX = 27.5f, SIG_RX = 87.5f, SIG_TY = 36.3f;
+	static constexpr float SIG_LX = 27.5f, SIG_RX = 87.5f, SIG_TY = 39.7f;
 	static constexpr float SIG_CX = 57.5f;
 	// Neural / Umbra column
 	static constexpr float NX_L = 128.5f, NX_R = 147.5f;
@@ -472,40 +472,40 @@ struct CoronalAnnihilatorWidget : ModuleWidget {
 		// mode and TRACK flank SPREAD.
 		addParam(createParamCentered<RoundBigBlackKnob>(mm2px(Vec(SIG_LX, SIG_TY)), module, CoronalAnnihilator::CORE_PITCH_PARAM));
 		addLabel(Vec(SIG_LX, SIG_TY + 10.f), "CORE");
-		addLabel(Vec(44.f, 24.4f), "SIN  TRI  SAW", eclipse::FINE_SIZE);
-		addParam(createParamCentered<CKSSThreeHorizontal>(mm2px(Vec(44.f, 28.9f)), module, CoronalAnnihilator::CORE_WAVE_PARAM));
-		addLabel(Vec(44.f, 33.3f), "WAVE");
+		addLabel(Vec(44.f, 27.8f), "SIN  TRI  SAW", eclipse::FINE_SIZE);
+		addParam(createParamCentered<CKSSThreeHorizontal>(mm2px(Vec(44.f, 32.3f)), module, CoronalAnnihilator::CORE_WAVE_PARAM));
+		addLabel(Vec(44.f, 36.7f), "WAVE");
 		addParam(createParamCentered<RoundBigBlackKnob>(mm2px(Vec(SIG_RX, SIG_TY)), module, CoronalAnnihilator::FLARE_PITCH_PARAM));
 		addLabel(Vec(SIG_RX, SIG_TY + 10.f), "FLARE");
-		addParam(createParamCentered<RoundSmallBlackKnob>(mm2px(Vec(92.5f, 52.f)), module, CoronalAnnihilator::FLARE_FINE_PARAM));
-		addLabel(Vec(92.5f, 58.2f), "FINE", eclipse::FINE_SIZE);
+		addParam(createParamCentered<RoundSmallBlackKnob>(mm2px(Vec(92.5f, 55.4f)), module, CoronalAnnihilator::FLARE_FINE_PARAM));
+		addLabel(Vec(92.5f, 61.6f), "FINE", eclipse::FINE_SIZE);
 
-		addLabel(Vec(71.f, 24.4f), "OFF SOFT HARD", eclipse::FINE_SIZE);
-		addParam(createParamCentered<CKSSThreeHorizontal>(mm2px(Vec(71.f, 28.9f)), module, CoronalAnnihilator::LOCK_PARAM));
-		addLabel(Vec(71.f, 33.3f), "LOCK");
+		addLabel(Vec(71.f, 27.8f), "OFF SOFT HARD", eclipse::FINE_SIZE);
+		addParam(createParamCentered<CKSSThreeHorizontal>(mm2px(Vec(71.f, 32.3f)), module, CoronalAnnihilator::LOCK_PARAM));
+		addLabel(Vec(71.f, 36.7f), "LOCK");
 		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(SIG_CX, SIG_TY)), module, CoronalAnnihilator::SURGE_PARAM));
-		addLabel(Vec(SIG_CX, 43.5f), "SURGE");
-		addLabel(Vec(40.f, 63.3f), "EXP", eclipse::FINE_SIZE);
-		addParam(createParamCentered<CKSS>(mm2px(Vec(40.f, 69.5f)), module, CoronalAnnihilator::FM_MODE_PARAM));
-		addLabel(Vec(40.f, 75.7f), "LIN", eclipse::FINE_SIZE);
-		addParam(createParamCentered<CKSS>(mm2px(Vec(75.f, 69.5f)), module, CoronalAnnihilator::TRACK_PARAM));
-		addLabel(Vec(75.f, 76.1f), "TRACK");
+		addLabel(Vec(SIG_CX, 46.9f), "SURGE");
+		addLabel(Vec(40.f, 66.7f), "EXP", eclipse::FINE_SIZE);
+		addParam(createParamCentered<CKSS>(mm2px(Vec(40.f, 72.9f)), module, CoronalAnnihilator::FM_MODE_PARAM));
+		addLabel(Vec(40.f, 79.1f), "LIN", eclipse::FINE_SIZE);
+		addParam(createParamCentered<CKSS>(mm2px(Vec(75.f, 72.9f)), module, CoronalAnnihilator::TRACK_PARAM));
+		addLabel(Vec(75.f, 79.5f), "TRACK");
 
-		addLabel(Vec(31.f, 61.2f), "V/OCT");
-		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(31.f, 55.f)), module, CoronalAnnihilator::CORE_VOCT_INPUT));
-		addLabel(Vec(84.f, 61.2f), "V/OCT");
-		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(84.f, 55.f)), module, CoronalAnnihilator::FLARE_VOCT_INPUT));
+		addLabel(Vec(31.f, 64.6f), "V/OCT");
+		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(31.f, 58.4f)), module, CoronalAnnihilator::CORE_VOCT_INPUT));
+		addLabel(Vec(84.f, 64.6f), "V/OCT");
+		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(84.f, 58.4f)), module, CoronalAnnihilator::FLARE_VOCT_INPUT));
 
-		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(SIG_CX, 64.6f)), module, CoronalAnnihilator::SPREAD_PARAM));
-		addLabel(Vec(SIG_CX, 71.8f), "SPREAD");
-		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(37.f, 84.f)), module, CoronalAnnihilator::PLASMA_PARAM));
-		addLabel(Vec(37.f, 91.2f), "PLASMA");
-		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(78.f, 84.f)), module, CoronalAnnihilator::EJECTA_PARAM));
-		addLabel(Vec(78.f, 91.2f), "EJECTA");
-		addLabel(Vec(SIG_CX, 79.4f), "ARC");
-		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(SIG_CX, 86.f)), module, CoronalAnnihilator::ARC_PARAM));
-		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(SIG_CX, 108.f)), module, CoronalAnnihilator::MIX_PARAM));
-		addLabel(Vec(SIG_CX, 115.2f), "MIX");
+		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(SIG_CX, 68.f)), module, CoronalAnnihilator::SPREAD_PARAM));
+		addLabel(Vec(SIG_CX, 75.2f), "SPREAD");
+		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(37.f, 87.4f)), module, CoronalAnnihilator::PLASMA_PARAM));
+		addLabel(Vec(37.f, 94.6f), "PLASMA");
+		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(78.f, 87.4f)), module, CoronalAnnihilator::EJECTA_PARAM));
+		addLabel(Vec(78.f, 94.6f), "EJECTA");
+		addLabel(Vec(SIG_CX, 82.8f), "ARC");
+		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(SIG_CX, 89.4f)), module, CoronalAnnihilator::ARC_PARAM));
+		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(SIG_CX, 111.4f)), module, CoronalAnnihilator::MIX_PARAM));
+		addLabel(Vec(SIG_CX, 118.6f), "MIX");
 
 		// ===== Neural =====
 		NamModelDisplay* display = new NamModelDisplay;
