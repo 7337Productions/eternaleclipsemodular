@@ -11,6 +11,11 @@
   4-pole lowpass with 12/24 dB slopes, resonance and key tracking.
 - Vendored NeuralAmpModelerCore v0.5.4, Eigen and nlohmann/json under
   dep/ (see dep/NeuralAmpModelerCore/PATCHES.md).
+- Performance pass: fast neural activations (default on, menu toggle,
+  halves standard-WaveNet cost at 50+ dB accuracy), knob-derived
+  gains/pitches memoized off the per-sample path, stress suite
+  covering NaN/Inf CV, six engine rates, 600 model-swap cycles and
+  a modulation soak with zero underruns or memory growth.
 - Shared widgets: two-position horizontal toggle (eclipse::CKSSHorizontal).
 
 ## 2.7.1 (2026-07-10)

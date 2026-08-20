@@ -3,9 +3,11 @@
 #include <cstring>
 #include <fstream>
 #include <memory>
+#include <mutex>
 #include <string>
 #include <dsp/resampler.hpp>
 #include <dsp/common.hpp>
+#include "NAM/activations.h"
 #include "NAM/get_dsp.h"
 #include "json.hpp"
 #include "Util.hpp"
@@ -28,7 +30,10 @@ struct NamModelSet {
 	// Returns nullptr and fills `error` on failure. Safe to call from any
 	// thread (not the audio thread: parses JSON, allocates, prewarms).
 	// `fallbackRate` is used for models that don't declare a sample rate.
-	static NamModelSet* load(const std::string& path, double fallbackRate, std::string& error) {
+	// `fastActivations` binds the cheap tanh approximation into the nets at
+	// construction (about half the CPU on standard WaveNet captures; output
+	// difference is typically 50+ dB below the signal).
+	static NamModelSet* load(const std::string& path, double fallbackRate, bool fastActivations, std::string& error) {
 		std::ifstream f(path, std::ios::binary);
 		if (!f) {
 			error = "missing";
@@ -41,6 +46,15 @@ struct NamModelSet {
 		}
 		std::unique_ptr<NamModelSet> m(new NamModelSet);
 		try {
+			// The activation choice is a process-wide registry that models
+			// bind at construction; serialize so concurrent loads from other
+			// module instances get the activations they asked for.
+			static std::mutex activationMutex;
+			std::lock_guard<std::mutex> lock(activationMutex);
+			if (fastActivations)
+				nam::activations::Activation::enable_fast_tanh();
+			else
+				nam::activations::Activation::disable_fast_tanh();
 			for (int c = 0; c < 2; c++) {
 				nam::DspLoadOptions opts;
 				opts.prewarm = false; // we prewarm below at the rate we run at

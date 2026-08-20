@@ -102,6 +102,19 @@ struct CoronalAnnihilator : Module {
 	// Menu options (read by the audio thread; bool writes are atomic enough)
 	bool monoModel = false;
 	bool normalizeLoudness = true;
+	bool fastActivations = true; // binds at model load; toggle reloads
+
+	// Memoized transcendentals: recomputed only when their inputs change,
+	// so knob-set values cost one compare per sample instead of pow/exp/cos
+	float driveMemoDb = NAN, driveGain = 1.f;
+	float levelMemoDb = NAN, levelGain = 1.f;
+	float mixMemo = NAN, mixGA = 1.f, mixGB = 0.f;
+	float expAMemo = NAN, freqAMemo = 261.63f;
+	float expBMemo = NAN, freqBMemo = 261.63f;
+	float cutoffExpMemo = NAN, cutoffMemo = 20000.f;
+	NamModelSet* loudMemoModel = NULL;
+	bool loudMemoNorm = false;
+	float loudGain = 1.f;
 
 	CoronalAnnihilator() {
 		config(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
@@ -179,9 +192,10 @@ struct CoronalAnnihilator : Module {
 		loadState = LOAD_LOADING;
 		setDisplayName(system::getStem(path));
 		int rate = engineRate.load();
-		loader = std::thread([this, path, rate]() {
+		bool fast = fastActivations;
+		loader = std::thread([this, path, rate, fast]() {
 			std::string error;
-			NamModelSet* m = NamModelSet::load(path, (double)rate, error);
+			NamModelSet* m = NamModelSet::load(path, (double)rate, fast, error);
 			if (!m) {
 				loadState = (error == "missing") ? LOAD_MISSING : LOAD_BAD;
 				return;
@@ -248,6 +262,7 @@ struct CoronalAnnihilator : Module {
 		json_object_set_new(rootJ, "modelPath", json_string(modelPath.c_str()));
 		json_object_set_new(rootJ, "monoModel", json_boolean(monoModel));
 		json_object_set_new(rootJ, "normalizeLoudness", json_boolean(normalizeLoudness));
+		json_object_set_new(rootJ, "fastActivations", json_boolean(fastActivations));
 		return rootJ;
 	}
 
@@ -258,6 +273,9 @@ struct CoronalAnnihilator : Module {
 		json_t* normJ = json_object_get(rootJ, "normalizeLoudness");
 		if (normJ)
 			normalizeLoudness = json_boolean_value(normJ);
+		json_t* fastJ = json_object_get(rootJ, "fastActivations");
+		if (fastJ)
+			fastActivations = json_boolean_value(fastJ);
 		json_t* pathJ = json_object_get(rootJ, "modelPath");
 		if (pathJ) {
 			std::string path = json_string_value(pathJ);
@@ -287,8 +305,18 @@ struct CoronalAnnihilator : Module {
 			if (params[TRACK_PARAM].getValue() > 0.5f)
 				flareVoct += coreVoct;
 			ComplexOsc::Params p;
-			p.freqA = dsp::FREQ_C4 * std::exp2(params[CORE_PITCH_PARAM].getValue() / 12.f + coreVoct);
-			p.freqB = dsp::FREQ_C4 * std::exp2((params[FLARE_PITCH_PARAM].getValue() + params[FLARE_FINE_PARAM].getValue()) / 12.f + flareVoct);
+			float expA = params[CORE_PITCH_PARAM].getValue() / 12.f + coreVoct;
+			if (expA != expAMemo) {
+				expAMemo = expA;
+				freqAMemo = dsp::FREQ_C4 * std::exp2(expA);
+			}
+			float expB = (params[FLARE_PITCH_PARAM].getValue() + params[FLARE_FINE_PARAM].getValue()) / 12.f + flareVoct;
+			if (expB != expBMemo) {
+				expBMemo = expB;
+				freqBMemo = dsp::FREQ_C4 * std::exp2(expB);
+			}
+			p.freqA = freqAMemo;
+			p.freqB = freqBMemo;
 			p.waveA = (int)std::round(params[CORE_WAVE_PARAM].getValue());
 			p.shape = cvParam(PLASMA_PARAM, PLASMA_INPUT, PLASMA_ATT_PARAM);
 			p.fold = cvParam(EJECTA_PARAM, EJECTA_INPUT, EJECTA_ATT_PARAM);
@@ -302,9 +330,12 @@ struct CoronalAnnihilator : Module {
 			// Equal-power mix, then spread Core left / Flare right
 			float mix = cvParam(MIX_PARAM, MIX_INPUT, MIX_ATT_PARAM);
 			float spread = cvParam(SPREAD_PARAM, SPREAD_INPUT, SPREAD_ATT_PARAM);
-			float gA = std::cos(mix * (float)M_PI_2);
-			float gB = std::sin(mix * (float)M_PI_2);
-			float ca = gA * a, cb = gB * b;
+			if (mix != mixMemo) {
+				mixMemo = mix;
+				mixGA = std::cos(mix * (float)M_PI_2);
+				mixGB = std::sin(mix * (float)M_PI_2);
+			}
+			float ca = mixGA * a, cb = mixGB * b;
 			sigL = 0.5f * (ca * (1.f + spread) + cb * (1.f - spread));
 			sigR = 0.5f * (ca * (1.f - spread) + cb * (1.f + spread));
 		}
@@ -316,14 +347,26 @@ struct CoronalAnnihilator : Module {
 		// ===== Neural stage =====
 		bool neuralActive = params[NEURAL_ACTIVE_PARAM].getValue() > 0.5f;
 		if (neuralActive && activeModel) {
-			float drive = dbToGain(params[DRIVE_PARAM].getValue());
-			float level = dbToGain(params[LEVEL_PARAM].getValue());
-			if (normalizeLoudness && activeModel->hasLoudness)
-				level *= dbToGain(-18.f - activeModel->loudness);
+			float driveDb = params[DRIVE_PARAM].getValue();
+			if (driveDb != driveMemoDb) {
+				driveMemoDb = driveDb;
+				driveGain = dbToGain(driveDb);
+			}
+			float levelDb = params[LEVEL_PARAM].getValue();
+			if (levelDb != levelMemoDb) {
+				levelMemoDb = levelDb;
+				levelGain = dbToGain(levelDb);
+			}
+			if (activeModel != loudMemoModel || normalizeLoudness != loudMemoNorm) {
+				loudMemoModel = activeModel;
+				loudMemoNorm = normalizeLoudness;
+				loudGain = (normalizeLoudness && activeModel->hasLoudness)
+					? dbToGain(-18.f - activeModel->loudness) : 1.f;
+			}
 			float l, r;
-			nam.process(sigL * drive, sigR * drive, activeModel, monoModel, l, r);
-			sigL = l * level;
-			sigR = r * level;
+			nam.process(sigL * driveGain, sigR * driveGain, activeModel, monoModel, l, r);
+			sigL = l * levelGain * loudGain;
+			sigR = r * levelGain * loudGain;
 		}
 		lights[NEURAL_LIGHT].setBrightness(neuralActive && activeModel ? 1.f : (neuralActive ? 0.25f : 0.f));
 
@@ -331,7 +374,11 @@ struct CoronalAnnihilator : Module {
 		float cutoffExp = params[CUTOFF_PARAM].getValue() * 10.f
 			+ clampf(inputs[CUTOFF_INPUT].getVoltage(), -10.f, 10.f) * params[CUTOFF_ATT_PARAM].getValue()
 			+ params[KEY_PARAM].getValue() * coreVoct;
-		float cutoff = clampf(20.f * std::exp2(cutoffExp), 20.f, std::min(20000.f, args.sampleRate * 0.45f));
+		if (cutoffExp != cutoffExpMemo) {
+			cutoffExpMemo = cutoffExp;
+			cutoffMemo = 20.f * std::exp2(cutoffExp);
+		}
+		float cutoff = clampf(cutoffMemo, 20.f, std::min(20000.f, args.sampleRate * 0.45f));
 		float res = cvParam(RES_PARAM, RES_INPUT, RES_ATT_PARAM);
 		otaCoeffs.update(cutoff, res, args.sampleRate);
 		bool fourPole = params[SLOPE_PARAM].getValue() > 0.5f;
@@ -610,6 +657,13 @@ struct CoronalAnnihilatorWidget : ModuleWidget {
 			menu->addChild(createMenuLabel(info));
 		menu->addChild(createBoolPtrMenuItem("Mono model (sum L+R through one network)", "", &module->monoModel));
 		menu->addChild(createBoolPtrMenuItem("Normalize model loudness (-18 dB)", "", &module->normalizeLoudness));
+		menu->addChild(createBoolMenuItem("Fast neural activations (half CPU, reloads model)", "",
+			[module]() { return module->fastActivations; },
+			[module](bool fast) {
+				module->fastActivations = fast;
+				if (!module->modelPath.empty())
+					module->requestLoad(module->modelPath);
+			}));
 	}
 };
 
