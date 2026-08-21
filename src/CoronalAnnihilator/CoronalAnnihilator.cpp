@@ -497,7 +497,9 @@ struct CoronalAnnihilatorWidget : ModuleWidget {
 	static constexpr float NX_L = 128.5f, NX_R = 147.5f;
 	// Patch bay column centers and jack/attenuverter pair offsets
 	static constexpr float BAY_XL = 171.5f, BAY_XR = 190.9f;
-	static constexpr float JACK_DX = -4.8f, ATT_DX = 5.2f;
+	// Jack (r 4.01) and trimpot (r 3.02) offsets chosen so the pair's
+	// bounding box is centered on the column axis
+	static constexpr float JACK_DX = -4.5f, ATT_DX = 5.5f;
 
 	void addLabel(Vec mmPos, const std::string& text, float fontSize = eclipse::LABEL_SIZE,
 	              NVGcolor color = eclipse::LABEL_COLOR) {
@@ -600,14 +602,16 @@ struct CoronalAnnihilatorWidget : ModuleWidget {
 		addLabel(Vec(BAY_XR, 20.3f), "IN R");
 		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(BAY_XL, 26.f)), module, CoronalAnnihilator::INL_INPUT));
 		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(BAY_XR, 26.f)), module, CoronalAnnihilator::INR_INPUT));
-		addLabel(Vec(BAY_XL, 33.3f), "SOURCE");
-		addLabel(Vec(165.f, 39.5f), "IN", eclipse::FINE_SIZE);
-		addParam(createParamCentered<RoundSmallBlackKnob>(mm2px(Vec(BAY_XL, 39.5f)), module, CoronalAnnihilator::SOURCE_PARAM));
-		addLabel(Vec(178.8f, 39.5f), "OSC", eclipse::FINE_SIZE);
-		addLabel(Vec(BAY_XR, 33.3f), "SRC CV");
-		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(BAY_XR, 39.5f)), module, CoronalAnnihilator::SOURCE_INPUT));
+		// SOURCE blend on the bay axis between the inputs, its CV jack stacked
+		// directly beneath the label
+		static const float BAY_CX = 0.5f * (BAY_XL + BAY_XR);
+		addLabel(Vec(173.2f, 37.5f), "IN", eclipse::FINE_SIZE);
+		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(BAY_CX, 37.5f)), module, CoronalAnnihilator::SOURCE_PARAM));
+		addLabel(Vec(189.5f, 37.5f), "OSC", eclipse::FINE_SIZE);
+		addLabel(Vec(BAY_CX, 44.7f), "SOURCE");
+		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(BAY_CX, 51.5f)), module, CoronalAnnihilator::SOURCE_INPUT));
 
-		static const float ROW_Y[4] = {52.f, 66.f, 80.f, 94.f};
+		static const float ROW_Y[4] = {65.5f, 78.5f, 91.5f, 104.5f};
 		struct BayEntry {
 			const char* label;
 			int inputId;
@@ -632,10 +636,10 @@ struct CoronalAnnihilatorWidget : ModuleWidget {
 			addCvPair(BAY_XR, ROW_Y[i], RIGHT[i].inputId, RIGHT[i].attId, module);
 		}
 
-		addLabel(Vec(BAY_XL, 111.6f), "OUT L", eclipse::LABEL_SIZE, eclipse::ACCENT_COLOR);
-		addLabel(Vec(BAY_XR, 111.6f), "OUT R", eclipse::LABEL_SIZE, eclipse::ACCENT_COLOR);
-		addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(BAY_XL, 117.6f)), module, CoronalAnnihilator::OUTL_OUTPUT));
-		addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(BAY_XR, 117.6f)), module, CoronalAnnihilator::OUTR_OUTPUT));
+		addLabel(Vec(BAY_XL, 112.3f), "OUT L", eclipse::LABEL_SIZE, eclipse::ACCENT_COLOR);
+		addLabel(Vec(BAY_XR, 112.3f), "OUT R", eclipse::LABEL_SIZE, eclipse::ACCENT_COLOR);
+		addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(BAY_XL, 118.4f)), module, CoronalAnnihilator::OUTL_OUTPUT));
+		addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(BAY_XR, 118.4f)), module, CoronalAnnihilator::OUTR_OUTPUT));
 	}
 
 	void step() override {

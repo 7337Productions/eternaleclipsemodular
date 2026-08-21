@@ -68,7 +68,7 @@
   </g>
 
   <!-- Patch bay output separator -->
-  <line x1="164.2" y1="109.2" x2="198.2" y2="109.2" stroke="#382110" stroke-width="0.4"/>
+  <line x1="164.2" y1="109.8" x2="198.2" y2="109.8" stroke="#382110" stroke-width="0.4"/>
 
   <!-- Corner brackets (Church card motif) -->
   <g fill="none" stroke="#cd762b" stroke-width="0.4" stroke-opacity="0.9">
