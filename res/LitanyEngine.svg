@@ -18,10 +18,12 @@
     <line x1="81.73" y1="10.8" x2="88.67" y2="10.8" stroke-opacity="0.2"/>
     <line x1="88.67" y1="10.8" x2="95.60" y2="10.8" stroke-opacity="0.08"/>
   </g>
-  <!-- Chamber glyph: the turning prayer wheel (open ring, clockwise arrow) -->
-  <g transform="translate(50.8 10.8)" fill="none" stroke="#ffc464" stroke-width="0.3" stroke-opacity="0.9">
-    <path d="M 1.06,-0.66 A 1.25,1.25 0 1 0 1.25,0.00"/>
-    <path d="M 0.62,-0.94 L 1.06,-0.66 L 0.98,-0.14"/>
+  <!-- Chamber glyph: the Leviathan's Cross (double cross over infinity) -->
+  <g transform="translate(50.8 10.8)" fill="none" stroke="#ffc464" stroke-width="0.3" stroke-opacity="0.9" stroke-linecap="round">
+    <line x1="0" y1="-1.5" x2="0" y2="0.75"/>
+    <line x1="-0.65" y1="-1.0" x2="0.65" y2="-1.0"/>
+    <line x1="-0.65" y1="-0.3" x2="0.65" y2="-0.3"/>
+    <path d="M -0.95,1.1 C -0.95,0.55 0,0.55 0,1.1 C 0,1.65 0.95,1.65 0.95,1.1 C 0.95,0.55 0,0.55 0,1.1 C 0,1.65 -0.95,1.65 -0.95,1.1 Z"/>
   </g>
 
   <!-- Loop display bezel (name and playhead drawn at runtime) -->
@@ -35,6 +37,16 @@
   <g fill="none" stroke="#cd762b" stroke-width="0.4" stroke-opacity="0.9">
     <path d="M 71.5,15.9 L 71.5,13.5 L 73.9,13.5"/>
     <path d="M 99.1,120.5 L 99.1,122.9 L 96.7,122.9"/>
+  </g>
+
+  <!-- Leviathan's Cross: stem through SPEED and LOOP into the lemniscate's
+       crossing (TURN), crossbars behind each knob. Gaps clear the runtime labels. -->
+  <g stroke="#ffc464" stroke-opacity="0.7" stroke-width="0.5" stroke-linecap="round">
+    <line x1="36" y1="25.0" x2="36" y2="52.3"/>
+    <line x1="36" y1="57.3" x2="36" y2="72.1"/>
+    <line x1="36" y1="77.1" x2="36" y2="84.0"/>
+    <line x1="14" y1="38.5" x2="58" y2="38.5"/>
+    <line x1="14" y1="65.0" x2="58" y2="65.0"/>
   </g>
 
   <!-- Litany wheel sigil around the SPEED knob (Abyssal Harmonics red):
