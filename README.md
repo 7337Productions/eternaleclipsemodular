@@ -120,18 +120,6 @@ captures; the stage passes signal through until one is loaded. Note that the neu
 path adds a small block latency (32 samples, plus conversion when the model's rate
 differs from the engine's).
 
-Performance is a design goal, not an afterthought. Models load on a worker thread
-and swap in atomically, so the audio thread never blocks; inference runs in
-32-sample blocks; knob-derived math is cached and recomputed only on change; every
-CV entry point is NaN-safe. Measured on one core of an i9-13900H at 48 kHz with
-Rack's own CPU meter: a standard-size WaveNet capture runs about 27% in full
-stereo (two networks), 16% with the mono-network menu option, and the module idles
-near 3.5% with no model loaded. Lighter captures (lite/feather WaveNet, LSTM) cost
-a fraction of that — an LSTM model measures ~1% for the whole stereo pair in a
-bench harness. Fast neural activations (default on, menu-switchable) halve the
-cost of standard WaveNet captures with error 50+ dB below the signal; the load/
-process pipeline is soak-tested for an hour-equivalent of hostile modulation and
-hundreds of model-swap cycles with zero underruns, NaN escapes, or memory growth.
 
 ### Litany Engine
 
