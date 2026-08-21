@@ -231,8 +231,8 @@ struct LoopDisplay : TransparentWidget {
 // direction = playback speed; the splice ducks under the head as it passes. -----
 struct LemniscateDisplay : TransparentWidget {
 	LitanyEngine* module = NULL;
-	static constexpr float A_MM = 32.f;        // Bernoulli scale: half-width = A*sqrt2, half-height = A/2 * Y_STRETCH
-	static constexpr float Y_STRETCH = 1.3f;   // rounder reels: fills the band between display and knob row
+	static constexpr float A_MM = 20.f;        // Bernoulli scale: half-width = A*sqrt2, half-height = A/2 * Y_STRETCH
+	static constexpr float Y_STRETCH = 1.1f;
 	static constexpr float HIDE_MM = 5.f;      // marker hidden under the TURN head at the crossing
 	static const NVGcolor SPLICE_COLOR;        // Abyssal Harmonics red, matches the sigil
 
@@ -260,7 +260,7 @@ struct LemniscateDisplay : TransparentWidget {
 				nvgLineTo(args.vg, p.x, p.y);
 		}
 		nvgStrokeColor(args.vg, nvgTransRGBA(eclipse::ACCENT_COLOR, 200));
-		nvgStrokeWidth(args.vg, mm2px(0.7f));
+		nvgStrokeWidth(args.vg, mm2px(0.55f));
 		nvgStroke(args.vg);
 	}
 
@@ -345,20 +345,21 @@ struct LitanyEngineWidget : ModuleWidget {
 		display->box.size = mm2px(Vec(85.6f, 8.f));
 		addChild(display);
 
-		// Tape-loop lemniscate: LOOP in the left lobe, SPEED in the right, TURN at the head
+		// Tape-loop lemniscate under the display, TURN at the head
 		LemniscateDisplay* tape = new LemniscateDisplay;
 		tape->module = module;
-		tape->box.pos = mm2px(Vec(CX - 47.f, 50.f - 22.f));
-		tape->box.size = mm2px(Vec(94.f, 44.f));
+		tape->box.pos = mm2px(Vec(CX - 31.f, 36.f - 13.f));
+		tape->box.size = mm2px(Vec(62.f, 26.f));
 		addChild(tape);
-
-		addParam(createParamCentered<RoundBigBlackKnob>(mm2px(Vec(CX - 28.f, 50.f)), module, LitanyEngine::LOOP_PARAM));
-		addLabel(Vec(CX - 28.f, 60.4f), "LOOP");
-		addParam(createLightParamCentered<VCVLightBezel<RedLight>>(mm2px(Vec(CX, 50.f)), module,
+		addParam(createLightParamCentered<VCVLightBezel<RedLight>>(mm2px(Vec(CX, 36.f)), module,
 			LitanyEngine::ADVANCE_PARAM, LitanyEngine::ADVANCE_LIGHT));
-		addLabel(Vec(CX, 57.6f), "TURN");
-		addParam(createParamCentered<RoundBigBlackKnob>(mm2px(Vec(CX + 28.f, 50.f)), module, LitanyEngine::SPEED_PARAM));
-		addLabel(Vec(CX + 28.f, 60.4f), "SPEED", eclipse::LABEL_SIZE, eclipse::ACCENT_COLOR);
+		addLabel(Vec(CX, 43.6f), "TURN");
+
+		// Liturgy row: loop select and varispeed (sigil ring around SPEED in the panel SVG)
+		addParam(createParamCentered<RoundBigBlackKnob>(mm2px(Vec(CX - 26.f, 60.f)), module, LitanyEngine::LOOP_PARAM));
+		addLabel(Vec(CX - 26.f, 70.4f), "LOOP");
+		addParam(createParamCentered<RoundBigBlackKnob>(mm2px(Vec(CX + 26.f, 60.f)), module, LitanyEngine::SPEED_PARAM));
+		addLabel(Vec(CX + 26.f, 70.4f), "SPEED", eclipse::LABEL_SIZE, eclipse::ACCENT_COLOR);
 
 		// Knob row: five across
 		static constexpr float ROW_X[5] = {12.7f, 31.75f, 50.8f, 69.85f, 88.9f};
@@ -368,7 +369,7 @@ struct LitanyEngineWidget : ModuleWidget {
 		addLabel(Vec(ROW_X[1], 87.4f), "MORPH");
 		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(ROW_X[2], 80.f)), module, LitanyEngine::SCAN_PARAM));
 		addLabel(Vec(ROW_X[2], 87.4f), "SCAN");
-		addParam(createParamCentered<Trimpot>(mm2px(Vec(ROW_X[3], 80.f)), module, LitanyEngine::TEXTURE_PARAM));
+		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(ROW_X[3], 80.f)), module, LitanyEngine::TEXTURE_PARAM));
 		addLabel(Vec(ROW_X[3], 87.4f), "TEXTURE");
 		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(ROW_X[4], 80.f)), module, LitanyEngine::LEVEL_PARAM));
 		addLabel(Vec(ROW_X[4], 87.4f), "LEVEL");
