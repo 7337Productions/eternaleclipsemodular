@@ -133,6 +133,24 @@ cost of standard WaveNet captures with error 50+ dB below the signal; the load/
 process pipeline is soak-tested for an hour-equivalent of hostile modulation and
 hundreds of model-swap cycles with zero underruns, NaN escapes, or memory growth.
 
+### Litany Engine
+
+![Litany Engine](docs/images/LitanyEngine.png)
+
+Looping sample player in the spirit of the Buddha Machine: a fixed litany of
+onboard loops is the instrument — there is no file loading, by design. LOOP selects
+a loop (the display names it and traces the playhead), and TURN, the display, or a
+trigger at TRIG steps to the next one. SPEED is a through-zero varispeed —
+tape-style, so pitch follows speed, reverse below zero, stopped at zero. The
+granular layer is Morphagene-inspired: GRAIN sweeps grain length from the whole
+loop (plain looped playback with a crossfaded loop point) down to 15 ms, MORPH
+raises grain overlap from single grains to an eight-deep lattice, SCAN offsets
+where grains are drawn from the loop, and TEXTURE adds position spray and stereo
+pan spread. SPEED, GRAIN, MORPH and SCAN each have a CV input with an attenuverter;
+EOC emits a pulse each time the tape wraps. Loops are decoded once on a background
+thread and shared across instances. Stereo out at ±5 V — patch it into the Coronal
+Annihilator's external input to run the litany through a neural amp model.
+
 All Eternal Eclipse audio modules are stereo.
 
 ## Building
@@ -147,5 +165,6 @@ make install   # package and install to your Rack user folder
 ```
 
 Third-party code vendored under `dep/`: NeuralAmpModelerCore (MIT, with a small
-documented patch — see `dep/NeuralAmpModelerCore/PATCHES.md`), Eigen (MPL2) and
-nlohmann/json (MIT). Their licenses ship with the plugin.
+documented patch — see `dep/NeuralAmpModelerCore/PATCHES.md`), Eigen (MPL2),
+nlohmann/json (MIT) and dr_wav (public domain / MIT-0). Their licenses ship with
+the plugin.

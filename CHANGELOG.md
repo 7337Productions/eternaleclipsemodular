@@ -1,5 +1,20 @@
 # Changelog
 
+## 2.9.0 (2026-08-20)
+
+- New module: Litany Engine — looping sample player with a fixed bank of
+  onboard loops (Buddha Machine ethos: no file loading, the shipped
+  litany is the instrument) and a focused Morphagene-style granular
+  layer: through-zero tape varispeed, grain size from whole-loop down
+  to 15 ms, morphing overlap to 8x, scan offset and texture spray with
+  stereo pan spread. Loop display with playhead, TURN/TRIG loop
+  advance, EOC pulse output, CV with attenuverters on the four main
+  controls. Loops decode once on a background thread and are shared by
+  all instances. Current bank is placeholder material — final branded
+  loops drop into res/litany/ (see the README there for the contract).
+- Vendored dr_wav v0.14.6 under dep/ (public domain / MIT-0, see
+  dep/dr_wav/PATCHES.md).
+
 ## 2.8.0 (2026-08-19)
 
 - New module: Coronal Annihilator — stereo synth voice. CORE/FLARE dual

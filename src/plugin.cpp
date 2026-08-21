@@ -11,4 +11,5 @@ void init(Plugin* p) {
 	p->addModel(modelSephirothicModulator);
 	p->addModel(modelCosmicClock);
 	p->addModel(modelCoronalAnnihilator);
+	p->addModel(modelLitanyEngine);
 }
