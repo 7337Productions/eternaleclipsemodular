@@ -13,6 +13,12 @@
 // position spray and stereo pan spread. Grains use a Tukey window whose taper
 // is clamped to ~10 ms, so a whole-loop grain is plain playback with a
 // crossfaded loop point rather than a special code path.
+//
+// Everything that measures grain life -- progress, window taper, the spawn
+// scheduler -- is counted in SOURCE frames and advanced by the live tape
+// increment each sample. Grains therefore follow SPEED instantly (including
+// through zero and into reverse) instead of freezing the speed they were
+// born at, exactly like material passing a real varispeed head.
 namespace litany {
 
 // Read-only view of a decoded loop. The underlying buffers are owned by the
@@ -42,7 +48,7 @@ public:
 	static constexpr int MAX_GRAINS = 16;
 	static constexpr float MIN_SPEED = 0.01f;      // below this the tape is stopped
 	static constexpr float MIN_GRAIN_SEC = 0.015f; // grain length at GRAIN = 1
-	static constexpr float TAPER_SEC = 0.010f;     // max window fade time
+	static constexpr float TAPER_SEC = 0.010f;     // max window fade time (engine time)
 	static constexpr float RETIRE_SEC = 0.015f;    // fade-out for retired grains
 
 	struct Out {
@@ -53,7 +59,7 @@ public:
 
 	void reset() {
 		head = 0.0;
-		countdown = 0.0;
+		countdownSrc = 0.0;
 		lastScan = -1.f;
 		curData = nullptr;
 		for (Grain& g : grains)
@@ -66,7 +72,8 @@ public:
 	Out process(const LoopView& loop, const GranularParams& p, float engineRate) {
 		Out out;
 		if (!loop.valid() || engineRate <= 0.f) {
-			renderGrains(out, engineRate); // let stragglers from an old loop fade out
+			retireAll();
+			renderGrains(out, engineRate, 0.0); // stragglers from an old loop fade out
 			return out;
 		}
 
@@ -75,7 +82,7 @@ public:
 			curData = loop.l;
 			retireAll();
 			head = 0.0;
-			countdown = 0.0;
+			countdownSrc = 0.0;
 			lastScan = -1.f;
 		}
 
@@ -110,28 +117,27 @@ public:
 		// instead of letting a huge grain keep playing stale material.
 		if (lastScan >= 0.f && wholeLoopish && std::fabs(p.scan - lastScan) > 0.01f) {
 			retireAll();
-			countdown = 0.0;
+			countdownSrc = 0.0;
 		}
 		lastScan = p.scan;
 
-		// ----- Scheduler -----
+		// ----- Scheduler (source-frame domain) -----
 		if (stopped) {
 			retireAll();
-			countdown = 0.0; // spawn immediately on resume
+			countdownSrc = 0.0; // spawn immediately on resume
 		}
 		else {
-			countdown -= 1.0;
-			if (countdown <= 0.0) {
-				spawn(loop, p, engineRate, inc, grainSrcFrames, frames);
+			countdownSrc -= std::fabs(inc);
+			if (countdownSrc <= 0.0) {
+				spawn(loop, p, grainSrcFrames, frames);
 				// Successive grains overlap by the window taper so the
 				// crossfade sums to unity (no dip at overlap = 1x).
-				const double durEngine = grainSrcFrames / std::fabs(inc);
-				const double taperEngine = std::fmin(durEngine * 0.5, (double)(TAPER_SEC * engineRate));
-				countdown = std::fmax(1.0, (durEngine - taperEngine) / overlap);
+				const double taperSrc = taperSrcFrames(grainSrcFrames, engineRate, inc);
+				countdownSrc = std::fmax(std::fabs(inc), (grainSrcFrames - taperSrc) / overlap);
 			}
 		}
 
-		renderGrains(out, engineRate);
+		renderGrains(out, engineRate, inc);
 		const float norm = 1.f / std::sqrt((float)overlap);
 		out.l *= norm;
 		out.r *= norm;
@@ -142,10 +148,8 @@ private:
 	struct Grain {
 		LoopView src;
 		double pos = 0.0;        // source frames, wrapped
-		double inc = 0.0;        // source frames per engine sample (signed)
-		double age = 0.0;        // engine samples since spawn
-		double dur = 0.0;        // total engine samples
-		double taper = 0.0;      // window fade, engine samples
+		double traveled = 0.0;   // |source frames| covered since spawn
+		double lenSrc = 0.0;     // grain length in source frames
 		float gainL = 1.f;
 		float gainR = 1.f;
 		bool active = false;
@@ -156,7 +160,7 @@ private:
 	Grain grains[MAX_GRAINS];
 	double head = 0.0;
 	double headPhase = 0.0;
-	double countdown = 0.0;
+	double countdownSrc = 0.0;
 	float lastScan = -1.f;
 	const float* curData = nullptr;
 	uint32_t rngState = 0x9e3779b9u;
@@ -169,24 +173,29 @@ private:
 		return (float)(int32_t)rngState * (1.f / 2147483648.f);
 	}
 
+	// ~10 ms of engine time expressed in source frames at the current tape
+	// speed, never more than half the grain.
+	static double taperSrcFrames(double lenSrc, float engineRate, double inc) {
+		return std::fmin(lenSrc * 0.5, (double)(TAPER_SEC * engineRate) * std::fabs(inc));
+	}
+
 	void retireAll() {
 		for (Grain& g : grains)
 			if (g.active)
 				g.retiring = true;
 	}
 
-	void spawn(const LoopView& loop, const GranularParams& p, float engineRate,
-	           double inc, double grainSrcFrames, double frames) {
-		// Reuse a free slot, else steal the oldest grain.
+	void spawn(const LoopView& loop, const GranularParams& p, double grainSrcFrames, double frames) {
+		// Reuse a free slot, else steal the most-traveled grain.
 		Grain* slot = nullptr;
-		double oldestAge = -1.0;
+		double oldest = -1.0;
 		for (Grain& g : grains) {
 			if (!g.active) {
 				slot = &g;
 				break;
 			}
-			if (g.age > oldestAge) {
-				oldestAge = g.age;
+			if (g.traveled > oldest) {
+				oldest = g.traveled;
 				slot = &g;
 			}
 		}
@@ -204,10 +213,8 @@ private:
 
 		slot->src = loop;
 		slot->pos = start;
-		slot->inc = inc;
-		slot->age = 0.0;
-		slot->dur = grainSrcFrames / std::fabs(inc);
-		slot->taper = std::fmin(slot->dur * 0.5, (double)(TAPER_SEC * engineRate));
+		slot->traveled = 0.0;
+		slot->lenSrc = grainSrcFrames;
 		slot->gainL = std::cos(theta) * panNorm;
 		slot->gainR = std::sin(theta) * panNorm;
 		slot->active = true;
@@ -215,23 +222,26 @@ private:
 		slot->retireGain = 1.f;
 	}
 
-	void renderGrains(Out& out, float engineRate) {
+	// `inc` is the live tape increment (signed source frames per engine sample).
+	void renderGrains(Out& out, float engineRate, double inc) {
 		const float retireStep = engineRate > 0.f ? 1.f / (RETIRE_SEC * engineRate) : 1.f;
+		const double step = std::fabs(inc);
 		for (Grain& g : grains) {
 			if (!g.active)
 				continue;
-			if (!g.src.valid() || g.age >= g.dur) {
+			if (!g.src.valid() || g.traveled >= g.lenSrc) {
 				g.active = false;
 				continue;
 			}
 
-			// Tukey window: raised-cosine edges, flat top.
+			// Tukey window in source frames: raised-cosine edges, flat top.
 			float w = 1.f;
-			if (g.taper > 0.0) {
-				if (g.age < g.taper)
-					w = 0.5f - 0.5f * std::cos((float)(g.age / g.taper) * PI_F);
-				else if (g.age > g.dur - g.taper)
-					w = 0.5f - 0.5f * std::cos((float)((g.dur - g.age) / g.taper) * PI_F);
+			const double taper = taperSrcFrames(g.lenSrc, engineRate, inc);
+			if (taper > 0.0) {
+				if (g.traveled < taper)
+					w = 0.5f - 0.5f * std::cos((float)(g.traveled / taper) * PI_F);
+				else if (g.traveled > g.lenSrc - taper)
+					w = 0.5f - 0.5f * std::cos((float)((g.lenSrc - g.traveled) / taper) * PI_F);
 			}
 			if (g.retiring) {
 				g.retireGain -= retireStep;
@@ -244,24 +254,24 @@ private:
 
 			// Linear-interpolated wrapped stereo read
 			const double frames = (double)g.src.frames;
-			double pos = g.pos;
-			size_t i0 = (size_t)pos;
+			size_t i0 = (size_t)g.pos;
 			if (i0 >= g.src.frames)
 				i0 = g.src.frames - 1;
 			const size_t i1 = (i0 + 1 < g.src.frames) ? i0 + 1 : 0;
-			const float frac = (float)(pos - (double)i0);
+			const float frac = (float)(g.pos - (double)i0);
 			const float sl = g.src.l[i0] + (g.src.l[i1] - g.src.l[i0]) * frac;
 			const float sr = g.src.r[i0] + (g.src.r[i1] - g.src.r[i0]) * frac;
 
 			out.l += sl * w * g.gainL;
 			out.r += sr * w * g.gainR;
 
-			g.pos += g.inc;
+			// Follow the live tape: direction and rate as of this sample
+			g.pos += inc;
 			if (g.pos >= frames)
 				g.pos -= frames;
 			else if (g.pos < 0.0)
 				g.pos += frames;
-			g.age += 1.0;
+			g.traveled += step;
 		}
 	}
 };
