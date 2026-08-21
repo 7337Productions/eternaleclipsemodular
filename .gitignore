@@ -5,3 +5,4 @@ plugin.dll
 .claude/
 Rack-SDK/
 /DualOsc/
+__pycache__/
