@@ -39,7 +39,7 @@
 
   <!-- Litany wheel sigil around the SPEED knob (Abyssal Harmonics red):
        ring of 13 tick strokes, the turning cycle of recitations -->
-  <g transform="translate(36 36)" stroke="#ff0000" stroke-opacity="0.85" fill="none">
+  <g transform="translate(36 38.5)" stroke="#ff0000" stroke-opacity="0.85" fill="none">
     <circle cx="0" cy="0" r="12.1" stroke-width="0.35"/>
     <g stroke-width="0.45">
       <line x1="0.000" y1="-11.400" x2="0.000" y2="-13.800"/>
