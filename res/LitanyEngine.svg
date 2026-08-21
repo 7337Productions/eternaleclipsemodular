@@ -25,36 +25,36 @@
   </g>
 
   <!-- Loop display bezel (name and playhead drawn at runtime) -->
-  <rect x="8" y="15.5" width="85.6" height="8" rx="1.5" fill="#070302" stroke="#cd762b" stroke-width="0.35" stroke-opacity="0.6"/>
+  <rect x="6" y="15.5" width="60" height="8" rx="1.5" fill="#070302" stroke="#cd762b" stroke-width="0.35" stroke-opacity="0.6"/>
 
   <!-- Section frames -->
-  <!-- Patch bay -->
-  <rect x="2.5" y="90.5" width="96.6" height="32.4" rx="2" fill="#0a0503" stroke="#382110" stroke-width="0.4"/>
+  <!-- Patch bay: full-height right column -->
+  <rect x="71.5" y="13.5" width="27.6" height="109.4" rx="2" fill="#0a0503" stroke="#382110" stroke-width="0.4"/>
 
   <!-- Corner brackets (Church card motif) -->
   <g fill="none" stroke="#cd762b" stroke-width="0.4" stroke-opacity="0.9">
-    <path d="M 2.5,92.9 L 2.5,90.5 L 4.9,90.5"/>
+    <path d="M 71.5,15.9 L 71.5,13.5 L 73.9,13.5"/>
     <path d="M 99.1,120.5 L 99.1,122.9 L 96.7,122.9"/>
   </g>
 
   <!-- Litany wheel sigil around the SPEED knob (Abyssal Harmonics red):
        ring of 13 tick strokes, the turning cycle of recitations -->
-  <g transform="translate(76.8 60)" stroke="#ff0000" stroke-opacity="0.85" fill="none">
-    <circle cx="0" cy="0" r="10.6" stroke-width="0.35"/>
+  <g transform="translate(36 36)" stroke="#ff0000" stroke-opacity="0.85" fill="none">
+    <circle cx="0" cy="0" r="12.1" stroke-width="0.35"/>
     <g stroke-width="0.45">
-      <line x1="0.000" y1="-10.0" x2="0.000" y2="-12.1"/>
-      <line x1="4.641" y1="-8.859" x2="5.616" y2="-10.719"/>
-      <line x1="8.222" y1="-5.690" x2="9.949" y2="-6.885"/>
-      <line x1="9.883" y1="-1.205" x2="11.959" y2="-1.458"/>
-      <line x1="9.350" y1="3.546" x2="11.314" y2="4.291"/>
-      <line x1="6.757" y1="7.372" x2="8.176" y2="8.920"/>
-      <line x1="2.393" y1="9.709" x2="2.896" y2="11.748"/>
-      <line x1="-2.393" y1="9.709" x2="-2.896" y2="11.748"/>
-      <line x1="-6.757" y1="7.372" x2="-8.176" y2="8.920"/>
-      <line x1="-9.350" y1="3.546" x2="-11.314" y2="4.291"/>
-      <line x1="-9.883" y1="-1.205" x2="-11.959" y2="-1.458"/>
-      <line x1="-8.222" y1="-5.690" x2="-9.949" y2="-6.885"/>
-      <line x1="-4.641" y1="-8.859" x2="-5.616" y2="-10.719"/>
+      <line x1="0.000" y1="-11.400" x2="0.000" y2="-13.800"/>
+      <line x1="5.298" y1="-10.094" x2="6.413" y2="-12.219"/>
+      <line x1="9.382" y1="-6.476" x2="11.357" y2="-7.839"/>
+      <line x1="11.317" y1="-1.374" x2="13.699" y2="-1.663"/>
+      <line x1="10.659" y1="4.042" x2="12.903" y2="4.894"/>
+      <line x1="7.560" y1="8.533" x2="9.151" y2="10.329"/>
+      <line x1="2.728" y1="11.069" x2="3.303" y2="13.399"/>
+      <line x1="-2.728" y1="11.069" x2="-3.303" y2="13.399"/>
+      <line x1="-7.560" y1="8.533" x2="-9.151" y2="10.329"/>
+      <line x1="-10.659" y1="4.042" x2="-12.903" y2="4.894"/>
+      <line x1="-11.317" y1="-1.374" x2="-13.699" y2="-1.663"/>
+      <line x1="-9.382" y1="-6.476" x2="-11.357" y2="-7.839"/>
+      <line x1="-5.298" y1="-10.094" x2="-6.413" y2="-12.219"/>
     </g>
   </g>
 

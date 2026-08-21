@@ -8,7 +8,7 @@
   layer: through-zero tape varispeed, grain size from whole-loop down
   to 15 ms, morphing overlap to 8x, scan offset and texture spray with
   stereo pan spread. Loop display with playhead, TURN/TRIG loop
-  advance, EOC pulse output, CV with attenuverters on the four main
+  advance, EOC pulse output, CV with attenuverters on the five main
   controls. Loops decode once on a background thread and are shared by
   all instances. Current bank is placeholder material — final branded
   loops drop into res/litany/ (see the README there for the contract).

@@ -149,7 +149,7 @@ granular layer is Morphagene-inspired: GRAIN sweeps grain length from the whole
 loop (plain looped playback with a crossfaded loop point) down to 15 ms, MORPH
 raises grain overlap from single grains to an eight-deep lattice, SCAN offsets
 where grains are drawn from the loop, and TEXTURE adds position spray and stereo
-pan spread. SPEED, GRAIN, MORPH and SCAN each have a CV input with an attenuverter;
+pan spread. SPEED, GRAIN, MORPH, SCAN and TEXTURE each have a CV input with an attenuverter;
 EOC emits a pulse each time the tape wraps. Loops are decoded once on a background
 thread and shared across instances. Stereo out at ±5 V — patch it into the Coronal
 Annihilator's external input to run the litany through a neural amp model.

@@ -23,6 +23,7 @@ struct LitanyEngine : Module {
 		GRAIN_ATT_PARAM,
 		MORPH_ATT_PARAM,
 		SCAN_ATT_PARAM,
+		TEXTURE_ATT_PARAM,
 		PARAMS_LEN
 	};
 	enum InputId {
@@ -31,6 +32,7 @@ struct LitanyEngine : Module {
 		GRAIN_INPUT,
 		MORPH_INPUT,
 		SCAN_INPUT,
+		TEXTURE_INPUT,
 		INPUTS_LEN
 	};
 	enum OutputId {
@@ -73,12 +75,14 @@ struct LitanyEngine : Module {
 		configParam(GRAIN_ATT_PARAM, -1.f, 1.f, 0.f, "Grain CV amount");
 		configParam(MORPH_ATT_PARAM, -1.f, 1.f, 0.f, "Morph CV amount");
 		configParam(SCAN_ATT_PARAM, -1.f, 1.f, 0.f, "Scan CV amount");
+		configParam(TEXTURE_ATT_PARAM, -1.f, 1.f, 0.f, "Texture CV amount");
 
 		configInput(TRIG_INPUT, "Advance loop trigger");
 		configInput(SPEED_INPUT, "Speed CV");
 		configInput(GRAIN_INPUT, "Grain CV");
 		configInput(MORPH_INPUT, "Morph CV");
 		configInput(SCAN_INPUT, "Scan CV");
+		configInput(TEXTURE_INPUT, "Texture CV");
 		configOutput(OUTL_OUTPUT, "Left audio");
 		configOutput(OUTR_OUTPUT, "Right audio");
 		configOutput(EOC_OUTPUT, "End of loop");
@@ -130,7 +134,7 @@ struct LitanyEngine : Module {
 		p.grain = cvParam(GRAIN_PARAM, GRAIN_INPUT, GRAIN_ATT_PARAM);
 		p.morph = cvParam(MORPH_PARAM, MORPH_INPUT, MORPH_ATT_PARAM);
 		p.scan = cvParam(SCAN_PARAM, SCAN_INPUT, SCAN_ATT_PARAM);
-		p.texture = params[TEXTURE_PARAM].getValue();
+		p.texture = cvParam(TEXTURE_PARAM, TEXTURE_INPUT, TEXTURE_ATT_PARAM);
 
 		litany::GranularEngine::Out out = engine.process(view, p, args.sampleRate);
 		loopPhase.store(engine.phase01(), std::memory_order_relaxed);
@@ -231,8 +235,8 @@ struct LoopDisplay : TransparentWidget {
 // direction = playback speed; the splice ducks under the head as it passes. -----
 struct LemniscateDisplay : TransparentWidget {
 	LitanyEngine* module = NULL;
-	static constexpr float A_MM = 20.f;        // Bernoulli scale: half-width = A*sqrt2, half-height = A/2 * Y_STRETCH
-	static constexpr float Y_STRETCH = 1.1f;
+	static constexpr float A_MM = 15.f;        // Bernoulli scale: half-width = A*sqrt2, half-height = A/2 * Y_STRETCH
+	static constexpr float Y_STRETCH = 1.f;
 	static constexpr float HIDE_MM = 5.f;      // marker hidden under the TURN head at the crossing
 	static const NVGcolor SPLICE_COLOR;        // Abyssal Harmonics red, matches the sigil
 
@@ -312,19 +316,20 @@ struct LemniscateDisplay : TransparentWidget {
 const NVGcolor LemniscateDisplay::SPLICE_COLOR = nvgRGB(0xff, 0x00, 0x00);
 
 struct LitanyEngineWidget : ModuleWidget {
-	// 20 HP. Column grid shared by the CV bay and the jack row.
-	static constexpr float CX = 50.8f;
-	static constexpr float COL[4] = {14.f, 38.5f, 63.f, 87.5f};
-	static constexpr float JACK_DX = -4.8f, ATT_DX = 5.2f;
+	// 20 HP. Left column (center LX) holds the voice; the right column is the
+	// full-height patch bay (center BX) of jack + attenuverter pairs.
+	static constexpr float LX = 36.f, BX = 85.2f;
+	static constexpr float JACK_DX = -5.f, ATT_DX = 5.f;
 
 	void addLabel(Vec mmPos, const std::string& text, float fontSize = eclipse::LABEL_SIZE,
 	              NVGcolor color = eclipse::LABEL_COLOR) {
 		eclipse::addLabel(this, mmPos, text, fontSize, color);
 	}
 
-	void addCvPair(float x, float y, int inputId, int attParamId, LitanyEngine* module) {
-		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(x + JACK_DX, y)), module, inputId));
-		addParam(createParamCentered<Trimpot>(mm2px(Vec(x + ATT_DX, y)), module, attParamId));
+	void addCvPair(float y, const char* label, int inputId, int attParamId, LitanyEngine* module) {
+		addLabel(Vec(BX, y - 5.7f), label);
+		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(BX + JACK_DX, y)), module, inputId));
+		addParam(createParamCentered<Trimpot>(mm2px(Vec(BX + ATT_DX, y)), module, attParamId));
 	}
 
 	LitanyEngineWidget(LitanyEngine* module) {
@@ -336,66 +341,62 @@ struct LitanyEngineWidget : ModuleWidget {
 		addChild(createWidget<ScrewBlack>(Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 		addChild(createWidget<ScrewBlack>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
-		eclipse::addHeader(this, CX, "L I T A N Y   E N G I N E");
+		eclipse::addHeader(this, 50.8f, "L I T A N Y   E N G I N E");
 
-		// Loop display over the bezel
+		// ===== Left column =====
 		LoopDisplay* display = new LoopDisplay;
 		display->module = module;
-		display->box.pos = mm2px(Vec(8.f, 15.5f));
-		display->box.size = mm2px(Vec(85.6f, 8.f));
+		display->box.pos = mm2px(Vec(6.f, 15.5f));
+		display->box.size = mm2px(Vec(60.f, 8.f));
 		addChild(display);
 
-		// Tape-loop lemniscate under the display, TURN at the head
+		// Varispeed: the huge knob inside the sigil ring (ring in the panel SVG)
+		addParam(createParamCentered<RoundHugeBlackKnob>(mm2px(Vec(LX, 36.f)), module, LitanyEngine::SPEED_PARAM));
+		addLabel(Vec(LX, 52.5f), "SPEED", eclipse::LABEL_SIZE, eclipse::ACCENT_COLOR);
+
+		addParam(createParamCentered<RoundBigBlackKnob>(mm2px(Vec(LX, 62.5f)), module, LitanyEngine::LOOP_PARAM));
+		addLabel(Vec(LX, 73.f), "LOOP");
+
+		// Tape-loop lemniscate, TURN at the head
 		LemniscateDisplay* tape = new LemniscateDisplay;
 		tape->module = module;
-		tape->box.pos = mm2px(Vec(CX - 31.f, 36.f - 13.f));
-		tape->box.size = mm2px(Vec(62.f, 26.f));
+		tape->box.pos = mm2px(Vec(LX - 23.f, 84.f - 9.f));
+		tape->box.size = mm2px(Vec(46.f, 18.f));
 		addChild(tape);
-		addParam(createLightParamCentered<VCVLightBezel<RedLight>>(mm2px(Vec(CX, 36.f)), module,
+		addParam(createLightParamCentered<VCVLightBezel<RedLight>>(mm2px(Vec(LX, 84.f)), module,
 			LitanyEngine::ADVANCE_PARAM, LitanyEngine::ADVANCE_LIGHT));
-		addLabel(Vec(CX, 43.6f), "TURN");
+		addLabel(Vec(LX, 91.f), "TURN");
 
-		// Liturgy row: loop select and varispeed (sigil ring around SPEED in the panel SVG)
-		addParam(createParamCentered<RoundBigBlackKnob>(mm2px(Vec(CX - 26.f, 60.f)), module, LitanyEngine::LOOP_PARAM));
-		addLabel(Vec(CX - 26.f, 70.4f), "LOOP");
-		addParam(createParamCentered<RoundBigBlackKnob>(mm2px(Vec(CX + 26.f, 60.f)), module, LitanyEngine::SPEED_PARAM));
-		addLabel(Vec(CX + 26.f, 70.4f), "SPEED", eclipse::LABEL_SIZE, eclipse::ACCENT_COLOR);
+		// Grain row
+		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(14.f, 100.f)), module, LitanyEngine::GRAIN_PARAM));
+		addLabel(Vec(14.f, 107.2f), "GRAIN");
+		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(LX, 100.f)), module, LitanyEngine::MORPH_PARAM));
+		addLabel(Vec(LX, 107.2f), "MORPH");
+		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(58.f, 100.f)), module, LitanyEngine::SCAN_PARAM));
+		addLabel(Vec(58.f, 107.2f), "SCAN");
 
-		// Knob row: five across
-		static constexpr float ROW_X[5] = {12.7f, 31.75f, 50.8f, 69.85f, 88.9f};
-		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(ROW_X[0], 80.f)), module, LitanyEngine::GRAIN_PARAM));
-		addLabel(Vec(ROW_X[0], 87.4f), "GRAIN");
-		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(ROW_X[1], 80.f)), module, LitanyEngine::MORPH_PARAM));
-		addLabel(Vec(ROW_X[1], 87.4f), "MORPH");
-		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(ROW_X[2], 80.f)), module, LitanyEngine::SCAN_PARAM));
-		addLabel(Vec(ROW_X[2], 87.4f), "SCAN");
-		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(ROW_X[3], 80.f)), module, LitanyEngine::TEXTURE_PARAM));
-		addLabel(Vec(ROW_X[3], 87.4f), "TEXTURE");
-		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(ROW_X[4], 80.f)), module, LitanyEngine::LEVEL_PARAM));
-		addLabel(Vec(ROW_X[4], 87.4f), "LEVEL");
+		// Bottom row
+		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(25.f, 115.f)), module, LitanyEngine::TEXTURE_PARAM));
+		addLabel(Vec(25.f, 122.2f), "TEXTURE");
+		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(47.f, 115.f)), module, LitanyEngine::LEVEL_PARAM));
+		addLabel(Vec(47.f, 122.2f), "LEVEL");
 
-		// CV bay: one row of jack + attenuverter pairs, label above each pair
-		struct BayEntry { const char* label; int inputId; int attId; };
-		static const BayEntry BAY[4] = {
-			{"SPEED", LitanyEngine::SPEED_INPUT, LitanyEngine::SPEED_ATT_PARAM},
-			{"GRAIN", LitanyEngine::GRAIN_INPUT, LitanyEngine::GRAIN_ATT_PARAM},
-			{"MORPH", LitanyEngine::MORPH_INPUT, LitanyEngine::MORPH_ATT_PARAM},
-			{"SCAN", LitanyEngine::SCAN_INPUT, LitanyEngine::SCAN_ATT_PARAM},
-		};
-		for (int i = 0; i < 4; i++) {
-			addLabel(Vec(COL[i], 93.8f), BAY[i].label);
-			addCvPair(COL[i], 99.5f, BAY[i].inputId, BAY[i].attId, module);
-		}
+		// ===== Right column: patch bay =====
+		addCvPair(24.f, "SPEED", LitanyEngine::SPEED_INPUT, LitanyEngine::SPEED_ATT_PARAM, module);
+		addCvPair(38.f, "GRAIN", LitanyEngine::GRAIN_INPUT, LitanyEngine::GRAIN_ATT_PARAM, module);
+		addCvPair(52.f, "MORPH", LitanyEngine::MORPH_INPUT, LitanyEngine::MORPH_ATT_PARAM, module);
+		addCvPair(66.f, "SCAN", LitanyEngine::SCAN_INPUT, LitanyEngine::SCAN_ATT_PARAM, module);
+		addCvPair(80.f, "TEXTURE", LitanyEngine::TEXTURE_INPUT, LitanyEngine::TEXTURE_ATT_PARAM, module);
 
-		// Jack row: trig / eoc / stereo out
-		addLabel(Vec(COL[0], 109.8f), "TRIG");
-		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(COL[0], 115.5f)), module, LitanyEngine::TRIG_INPUT));
-		addLabel(Vec(COL[1], 109.8f), "EOC");
-		addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(COL[1], 115.5f)), module, LitanyEngine::EOC_OUTPUT));
-		addLabel(Vec(COL[2], 109.8f), "OUT L", eclipse::LABEL_SIZE, eclipse::ACCENT_COLOR);
-		addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(COL[2], 115.5f)), module, LitanyEngine::OUTL_OUTPUT));
-		addLabel(Vec(COL[3], 109.8f), "OUT R", eclipse::LABEL_SIZE, eclipse::ACCENT_COLOR);
-		addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(COL[3], 115.5f)), module, LitanyEngine::OUTR_OUTPUT));
+		addLabel(Vec(BX - 6.f, 90.3f), "TRIG");
+		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(BX - 6.f, 96.f)), module, LitanyEngine::TRIG_INPUT));
+		addLabel(Vec(BX + 6.f, 90.3f), "EOC");
+		addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(BX + 6.f, 96.f)), module, LitanyEngine::EOC_OUTPUT));
+
+		addLabel(Vec(BX - 6.f, 106.3f), "OUT L", eclipse::LABEL_SIZE, eclipse::ACCENT_COLOR);
+		addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(BX - 6.f, 112.f)), module, LitanyEngine::OUTL_OUTPUT));
+		addLabel(Vec(BX + 6.f, 106.3f), "OUT R", eclipse::LABEL_SIZE, eclipse::ACCENT_COLOR);
+		addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(BX + 6.f, 112.f)), module, LitanyEngine::OUTR_OUTPUT));
 	}
 };
 
