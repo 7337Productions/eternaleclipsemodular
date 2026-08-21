@@ -140,7 +140,9 @@ hundreds of model-swap cycles with zero underruns, NaN escapes, or memory growth
 Looping sample player in the spirit of the Buddha Machine: a fixed litany of
 onboard loops is the instrument — there is no file loading, by design. LOOP selects
 a loop (the display names it and traces the playhead), and TURN, the display, or a
-trigger at TRIG steps to the next one. SPEED is a through-zero varispeed —
+trigger at TRIG steps to the next one. A gold lemniscate threads the SPEED knob like
+tape around a capstan: the splice marker orbits it with the loop, its trail
+lengthening with speed and reversing with it, ducking under the head each pass. SPEED is a through-zero varispeed —
 tape-style, so pitch follows speed, reverse below zero, stopped at zero. The
 granular layer is Morphagene-inspired: GRAIN sweeps grain length from the whole
 loop (plain looped playback with a crossfaded loop point) down to 15 ms, MORPH

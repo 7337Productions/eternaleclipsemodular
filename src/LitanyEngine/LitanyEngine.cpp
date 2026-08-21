@@ -49,6 +49,7 @@ struct LitanyEngine : Module {
 	dsp::SchmittTrigger buttonTrigger;
 	dsp::PulseGenerator eocPulse;
 	std::atomic<float> loopPhase{0.f};
+	std::atomic<float> playSpeed{1.f};
 
 	LitanyEngine() {
 		config(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
@@ -133,6 +134,7 @@ struct LitanyEngine : Module {
 
 		litany::GranularEngine::Out out = engine.process(view, p, args.sampleRate);
 		loopPhase.store(engine.phase01(), std::memory_order_relaxed);
+		playSpeed.store(p.speed, std::memory_order_relaxed);
 		if (out.eoc)
 			eocPulse.trigger(1e-3f);
 
@@ -224,6 +226,87 @@ struct LoopDisplay : TransparentWidget {
 	}
 };
 
+// ----- Tape-loop lemniscate: a splice marker orbits an infinity path that
+// threads the SPEED knob (the capstan). Position = loop phase, trail length and
+// direction = playback speed; the splice ducks under the head as it passes. -----
+struct LemniscateDisplay : TransparentWidget {
+	LitanyEngine* module = NULL;
+	static constexpr float A_MM = 22.f;        // Bernoulli scale: half-width = A*sqrt2, half-height = A/2
+	static constexpr float HIDE_MM = 8.f;      // marker hidden within the knob radius
+
+	Vec point(float t) {
+		float s = std::sin(t), c = std::cos(t);
+		float d = 1.f + s * s;
+		float k = A_MM * 1.41421356f;
+		return mm2px(Vec(k * c / d, k * s * c / d)).plus(box.size.div(2.f));
+	}
+
+	// Phase 0 = the splice at the head, heading into the left lobe
+	static float toT(float phase) {
+		return 0.5f * (float)M_PI + 2.f * (float)M_PI * phase;
+	}
+
+	void draw(const DrawArgs& args) override {
+		// Static tape path, drawn in layer 0 so the knob sits on top of it
+		const int N = 180;
+		nvgBeginPath(args.vg);
+		for (int i = 0; i <= N; i++) {
+			Vec p = point(2.f * (float)M_PI * i / N);
+			if (i == 0)
+				nvgMoveTo(args.vg, p.x, p.y);
+			else
+				nvgLineTo(args.vg, p.x, p.y);
+		}
+		nvgStrokeColor(args.vg, nvgTransRGBA(eclipse::ACCENT_COLOR, 170));
+		nvgStrokeWidth(args.vg, mm2px(0.35f));
+		nvgStroke(args.vg);
+	}
+
+	void drawLayer(const DrawArgs& args, int layer) override {
+		if (layer != 1)
+			return;
+		float phase = 0.12f, speed = 1.f;
+		if (module) {
+			phase = module->loopPhase.load(std::memory_order_relaxed);
+			speed = module->playSpeed.load(std::memory_order_relaxed);
+		}
+		const Vec c = box.size.div(2.f);
+		const float hideR = mm2px(HIDE_MM);
+		const float dir = speed < 0.f ? -1.f : 1.f;
+		const float trail = 0.012f + 0.035f * std::fmin(std::fabs(speed), 2.f);
+
+		// Motion trail: fades out behind the splice, longer at higher speed
+		const int N = 20;
+		Vec prev = point(toT(phase));
+		for (int k = 1; k <= N; k++) {
+			Vec p = point(toT(phase - dir * trail * k / N));
+			float a = 1.f - (float)k / N;
+			if (prev.minus(c).norm() > hideR && p.minus(c).norm() > hideR) {
+				nvgBeginPath(args.vg);
+				nvgMoveTo(args.vg, prev.x, prev.y);
+				nvgLineTo(args.vg, p.x, p.y);
+				nvgStrokeColor(args.vg, nvgTransRGBA(eclipse::ACCENT_COLOR, (unsigned char)(220 * a)));
+				nvgStrokeWidth(args.vg, mm2px(0.25f + 0.55f * a));
+				nvgStroke(args.vg);
+			}
+			prev = p;
+		}
+
+		// The splice
+		Vec m = point(toT(phase));
+		if (m.minus(c).norm() > hideR) {
+			nvgBeginPath(args.vg);
+			nvgCircle(args.vg, m.x, m.y, mm2px(1.4f));
+			nvgFillColor(args.vg, nvgTransRGBA(eclipse::ACCENT_COLOR, 70));
+			nvgFill(args.vg);
+			nvgBeginPath(args.vg);
+			nvgCircle(args.vg, m.x, m.y, mm2px(0.7f));
+			nvgFillColor(args.vg, eclipse::LABEL_COLOR);
+			nvgFill(args.vg);
+		}
+	}
+};
+
 struct LitanyEngineWidget : ModuleWidget {
 	// 20 HP. Column grid shared by the grain row, the CV bay and the jack row.
 	static constexpr float CX = 50.8f;
@@ -257,6 +340,13 @@ struct LitanyEngineWidget : ModuleWidget {
 		display->box.pos = mm2px(Vec(8.f, 15.5f));
 		display->box.size = mm2px(Vec(85.6f, 8.f));
 		addChild(display);
+
+		// Tape-loop lemniscate centered on the SPEED knob
+		LemniscateDisplay* tape = new LemniscateDisplay;
+		tape->module = module;
+		tape->box.pos = mm2px(Vec(CX - 34.f, 58.f - 14.f));
+		tape->box.size = mm2px(Vec(68.f, 28.f));
+		addChild(tape);
 
 		// Liturgy row: loop select / advance / level (labels at knob radius + clearance)
 		addParam(createParamCentered<RoundBigBlackKnob>(mm2px(Vec(22.f, 36.f)), module, LitanyEngine::LOOP_PARAM));
