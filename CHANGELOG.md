@@ -10,9 +10,10 @@
   unity feedback. Note: existing patches will sound larger at the same
   SIZE setting — the whole knob range grew upward.
 - Liminal Vast display is now alive (GitHub #1): the eclipse's corona
-  glows with the tail's energy and reaches with SIZE, and input
-  transients eject embers from the rim — count from DENSITY, travel
-  from SIZE, lifetime from DECAY; frozen embers orbit the disc.
+  glows with the tail's energy and reaches with SIZE, and embers drift
+  continuously from the rim, swelling with the incoming signal level —
+  rate from DENSITY, travel from SIZE, lifetime from DECAY; frozen
+  embers orbit the disc.
 - Liminal Vast fixes: delay reads clamped for engine rates above
   192 kHz, DENSITY sweeps through zero without a click, reset now
   clears all modulation and smoothing state, and sample-rate changes

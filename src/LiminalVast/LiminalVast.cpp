@@ -57,19 +57,16 @@ struct LiminalVast : Module {
 
 	// Display state: written here, read lock-free by VastDisplay
 	float dispEnergy = 0.f;
+	float dispInput = 0.f;
 	float dispSize = 0.5f;
 	float dispDecay = 0.5f;
 	float dispDensity = 0.7f;
 	float dispFreeze = 0.f;
-	int dispBurst = 0;
 
-	// Wet-tail energy + input-onset followers, refreshed every 256 samples
+	// Wet-tail and dry-input level followers, refreshed every 256 samples
 	dsp::ClockDivider envDivider;
 	float energyAcc = 0.f;
-	float onsetPeak = 0.f;
-	float onsetFast = 0.f;
-	float onsetSlow = 0.f;
-	bool onsetArmed = true;
+	float inputAcc = 0.f;
 
 	LiminalVast() {
 		config(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
@@ -123,12 +120,10 @@ struct LiminalVast : Module {
 			params[DENSITY_PARAM].getValue(), modRate, params[DEPTH_PARAM].getValue(),
 			lowCut, highCut, frozen ? 1.f : 0.f, args.sampleRate);
 
-		// Display followers: tail RMS for the corona, fast/slow input envelope
-		// pair for transient-triggered particle bursts
+		// Display followers: tail RMS for the corona, dry-input RMS for the
+		// continuous ember drift
 		energyAcc += wet.L * wet.L + wet.R * wet.R;
-		float dryAbs = std::fabs(dryL) + std::fabs(dryR);
-		if (dryAbs > onsetPeak)
-			onsetPeak = dryAbs;
+		inputAcc += dryL * dryL + dryR * dryR;
 		if (envDivider.process()) {
 			float dt = 256.f * args.sampleTime;
 			float rms = std::sqrt(energyAcc / 256.f);
@@ -138,17 +133,12 @@ struct LiminalVast : Module {
 			float tau = (e > dispEnergy) ? 0.03f : 0.4f;
 			dispEnergy += (1.f - std::exp(-dt / tau)) * (e - dispEnergy);
 
-			float fastTau = (onsetPeak > onsetFast) ? 0.005f : 0.08f;
-			onsetFast += (1.f - std::exp(-dt / fastTau)) * (onsetPeak - onsetFast);
-			onsetSlow += (1.f - std::exp(-dt / 0.3f)) * (onsetPeak - onsetSlow);
-			onsetPeak = 0.f;
-			if (onsetArmed && onsetFast > 1.6f * onsetSlow + 0.02f) {
-				dispBurst++;
-				onsetArmed = false;
-			}
-			else if (!onsetArmed && onsetFast < 1.2f * onsetSlow + 0.02f) {
-				onsetArmed = true;
-			}
+			float inRms = std::sqrt(inputAcc / 256.f);
+			inputAcc = 0.f;
+			float li = clamp(inRms * 1.5f, 0.f, 1.f);
+			li = li / (li + 0.3f);
+			float tauIn = (li > dispInput) ? 0.05f : 0.5f;
+			dispInput += (1.f - std::exp(-dt / tauIn)) * (li - dispInput);
 
 			dispFreeze += (1.f - std::exp(-dt / 0.1f)) * ((frozen ? 1.f : 0.f) - dispFreeze);
 			lights[FREEZE_LIGHT].setBrightness(dispFreeze);
@@ -173,9 +163,9 @@ struct LiminalVast : Module {
 };
 
 // Live overlay on the eclipse art: corona glow riding the tail's energy, and
-// particles ejected from the rim on input transients. Simulation lives
-// entirely here (never on the audio thread), driven by the module's disp*
-// fields.
+// a continuous ember drift from the rim whose intensity follows the incoming
+// signal level. Simulation lives entirely here (never on the audio thread),
+// driven by the module's disp* fields.
 struct VastDisplay : TransparentWidget {
 	LiminalVast* module = nullptr;
 
@@ -189,7 +179,7 @@ struct VastDisplay : TransparentWidget {
 	static constexpr int MAX_PARTICLES = 48;
 	Particle particles[MAX_PARTICLES];
 	int nextParticle = 0;
-	int lastBurst = 0;
+	float spawnAccum = 0.f;
 
 	// Eclipse center in local coords: panel mm(30.48, 26) minus box origin
 	static Vec center() {
@@ -201,22 +191,20 @@ struct VastDisplay : TransparentWidget {
 		box.size = mm2px(Vec(55.96f, 26.f));
 	}
 
-	void spawnBurst(float size, float decay, float density, float freeze) {
-		int count = (int)(6.f + 10.f * density);
-		float rim = mm2px(7.3f);
+	void spawnEmber(float size, float decay, float freeze) {
+		Particle& p = particles[nextParticle];
+		nextParticle = (nextParticle + 1) % MAX_PARTICLES;
+		float ang = 2.f * M_PI * random::uniform();
+		Vec dir = Vec(std::cos(ang), std::sin(ang));
+		p.pos = center().plus(dir.mult(mm2px(7.3f)));
+		// Gentle drift: slower than a burst would be, so the motion reads as
+		// embers rising off the corona rather than an eruption
+		float speed = mm2px(3.5f) * (0.4f + size) * (0.5f + 0.9f * random::uniform());
+		p.vel = dir.mult(speed);
+		p.age = 0.f;
 		float life = 0.4f + 2.2f * ((freeze > 0.5f) ? 1.f : decay);
-		for (int n = 0; n < count; n++) {
-			Particle& p = particles[nextParticle];
-			nextParticle = (nextParticle + 1) % MAX_PARTICLES;
-			float ang = 2.f * M_PI * random::uniform();
-			Vec dir = Vec(std::cos(ang), std::sin(ang));
-			p.pos = center().plus(dir.mult(rim));
-			float speed = mm2px(6.f) * (0.5f + size) * (0.6f + 0.8f * random::uniform());
-			p.vel = dir.mult(speed);
-			p.age = 0.f;
-			p.life = life * (0.6f + 0.8f * random::uniform());
-			p.radius = mm2px(0.25f + 0.35f * random::uniform());
-		}
+		p.life = life * (0.6f + 0.8f * random::uniform());
+		p.radius = mm2px(0.25f + 0.35f * random::uniform());
 	}
 
 	void step() override {
@@ -228,9 +216,13 @@ struct VastDisplay : TransparentWidget {
 			dt = 0.05f;
 		float freeze = module->dispFreeze;
 
-		if (module->dispBurst != lastBurst) {
-			lastBurst = module->dispBurst;
-			spawnBurst(module->dispSize, module->dispDecay, module->dispDensity, freeze);
+		// Continuous emission: rate rides the incoming signal level,
+		// scaled by DENSITY
+		float rate = module->dispInput * (3.f + 15.f * module->dispDensity);
+		spawnAccum += rate * dt;
+		while (spawnAccum >= 1.f) {
+			spawnAccum -= 1.f;
+			spawnEmber(module->dispSize, module->dispDecay, freeze);
 		}
 
 		for (Particle& p : particles) {

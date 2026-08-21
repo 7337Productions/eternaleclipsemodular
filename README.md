@@ -51,8 +51,8 @@ scales the network from intimate rooms to the endless liminal vast, DECAY is
 calibrated RT60 (0.2s to ∞ at the top of the knob), and FREEZE — button or gate —
 holds the tail forever. DENSITY, mod RATE/DEPTH, LO/HI CUT, and MIX shape the
 character; CV over size, decay, and mix; right input normalled to left. The eclipse
-on the panel is alive: its corona glows with the tail's energy and input transients
-eject embers from the rim.
+on the panel is alive: its corona glows with the tail's energy and embers drift from
+the rim with the incoming signal.
 
 ### Saros
 
