@@ -90,9 +90,20 @@ private:
 			num = stem.substr(0, 2);
 			rest = stem.substr(3);
 		}
-		for (char& c : rest)
-			c = (c == '-' || c == '_') ? ' ' : toupper(c);
-		return num.empty() ? rest : num + " \xC2\xB7 " + rest;
+		// Hyphens/underscores become spaces; CamelCase splits on lower->upper
+		// ("MorsEstRequies" -> "MORS EST REQUIES"); everything uppercased.
+		std::string out;
+		for (size_t i = 0; i < rest.size(); i++) {
+			char c = rest[i];
+			if (c == '-' || c == '_') {
+				out += ' ';
+				continue;
+			}
+			if (i > 0 && isupper((unsigned char)c) && islower((unsigned char)rest[i - 1]))
+				out += ' ';
+			out += (char)toupper((unsigned char)c);
+		}
+		return num.empty() ? out : num + " · " + out;
 	}
 
 	void decodeAll() {

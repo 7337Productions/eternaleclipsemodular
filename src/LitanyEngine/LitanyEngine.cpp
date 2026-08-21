@@ -167,11 +167,13 @@ struct LoopDisplay : TransparentWidget {
 	void drawLayer(const DrawArgs& args, int layer) override {
 		if (layer != 1)
 			return;
-		std::string text = "01 \xC2\xB7 FIRST UTTERANCE";
+		litany::SampleBank& bank = litany::SampleBank::get();
 		NVGcolor color = eclipse::ACCENT_COLOR;
 		float phase = 0.f;
+		// Browser preview (no module): show the first loop of the bank
+		const litany::Loop* first = bank.loop(0);
+		std::string text = first ? first->name : "NO LOOPS";
 		if (module) {
-			litany::SampleBank& bank = litany::SampleBank::get();
 			const litany::Loop* lp = bank.loop(module->currentLoop());
 			if (!lp) {
 				text = "NO LOOPS";
