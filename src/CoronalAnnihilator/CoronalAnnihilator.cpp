@@ -63,6 +63,7 @@ struct CoronalAnnihilator : Module {
 		SPREAD_INPUT,
 		CUTOFF_INPUT,
 		RES_INPUT,
+		SOURCE_INPUT,
 		INPUTS_LEN
 	};
 	enum OutputId {
@@ -109,6 +110,7 @@ struct CoronalAnnihilator : Module {
 	float driveMemoDb = NAN, driveGain = 1.f;
 	float levelMemoDb = NAN, levelGain = 1.f;
 	float mixMemo = NAN, mixGA = 1.f, mixGB = 0.f;
+	float srcMemo = NAN, srcGIn = 0.f, srcGOsc = 1.f;
 	float expAMemo = NAN, freqAMemo = 261.63f;
 	float expBMemo = NAN, freqBMemo = 261.63f;
 	float cutoffExpMemo = NAN, cutoffMemo = 20000.f;
@@ -131,7 +133,7 @@ struct CoronalAnnihilator : Module {
 		configSwitch(LOCK_PARAM, 0.f, 2.f, 0.f, "Lock (Flare sync to Core)", {"Off", "Soft", "Hard"});
 		configParam(MIX_PARAM, 0.f, 1.f, 0.5f, "Mix (Core \xE2\x86\x90 / Flare \xE2\x86\x92)", "%", 0.f, 100.f);
 		configParam(SPREAD_PARAM, 0.f, 1.f, 0.5f, "Spread (Core left / Flare right)", "%", 0.f, 100.f);
-		configSwitch(SOURCE_PARAM, 0.f, 1.f, 1.f, "Source", {"Stereo input", "Oscillators"});
+		configParam(SOURCE_PARAM, 0.f, 1.f, 1.f, "Source (stereo input ← / oscillators →)", "%", 0.f, 100.f);
 		configParam(DRIVE_PARAM, -30.f, 18.f, -12.f, "Drive (neural model input)", " dB");
 		configParam(LEVEL_PARAM, -24.f, 24.f, 0.f, "Level (neural model output)", " dB");
 		configSwitch(NEURAL_ACTIVE_PARAM, 0.f, 1.f, 1.f, "Neural stage", {"Bypassed", "Active"});
@@ -160,6 +162,7 @@ struct CoronalAnnihilator : Module {
 		configInput(SPREAD_INPUT, "Spread CV");
 		configInput(CUTOFF_INPUT, "Cutoff CV (1 V/oct)");
 		configInput(RES_INPUT, "Resonance CV");
+		configInput(SOURCE_INPUT, "Source blend CV (10 V = full sweep)");
 		configOutput(OUTL_OUTPUT, "Left audio");
 		configOutput(OUTR_OUTPUT, "Right audio");
 		configBypass(INL_INPUT, OUTL_OUTPUT);
@@ -297,10 +300,16 @@ struct CoronalAnnihilator : Module {
 			nam.configure((int)args.sampleRate, modelRate);
 		}
 
-		// ===== Source =====
+		// ===== Source: equal-power blend of the stereo input and the oscillators =====
 		float coreVoct = clampf(inputs[CORE_VOCT_INPUT].getVoltage(), -10.f, 10.f);
-		float sigL, sigR; // +/-1 units
-		if (params[SOURCE_PARAM].getValue() > 0.5f) {
+		float blend = clampf(params[SOURCE_PARAM].getValue() + inputs[SOURCE_INPUT].getVoltage() / 10.f, 0.f, 1.f);
+		if (blend != srcMemo) {
+			srcMemo = blend;
+			srcGIn = std::cos(blend * (float)M_PI_2);
+			srcGOsc = std::sin(blend * (float)M_PI_2);
+		}
+		float sigL = 0.f, sigR = 0.f; // +/-1 units
+		if (srcGOsc > 0.f) {
 			float flareVoct = clampf(inputs[FLARE_VOCT_INPUT].getVoltage(), -10.f, 10.f);
 			if (params[TRACK_PARAM].getValue() > 0.5f)
 				flareVoct += coreVoct;
@@ -336,12 +345,14 @@ struct CoronalAnnihilator : Module {
 				mixGB = std::sin(mix * (float)M_PI_2);
 			}
 			float ca = mixGA * a, cb = mixGB * b;
-			sigL = 0.5f * (ca * (1.f + spread) + cb * (1.f - spread));
-			sigR = 0.5f * (ca * (1.f - spread) + cb * (1.f + spread));
+			sigL = srcGOsc * 0.5f * (ca * (1.f + spread) + cb * (1.f - spread));
+			sigR = srcGOsc * 0.5f * (ca * (1.f - spread) + cb * (1.f + spread));
 		}
-		else {
-			sigL = sanitize(inputs[INL_INPUT].getVoltage()) * 0.2f;
-			sigR = inputs[INR_INPUT].isConnected() ? sanitize(inputs[INR_INPUT].getVoltage()) * 0.2f : sigL;
+		if (srcGIn > 0.f) {
+			float inL = sanitize(inputs[INL_INPUT].getVoltage()) * 0.2f;
+			float inR = inputs[INR_INPUT].isConnected() ? sanitize(inputs[INR_INPUT].getVoltage()) * 0.2f : inL;
+			sigL += srcGIn * inL;
+			sigR += srcGIn * inR;
 		}
 
 		// ===== Neural stage =====
@@ -589,10 +600,12 @@ struct CoronalAnnihilatorWidget : ModuleWidget {
 		addLabel(Vec(BAY_XR, 20.3f), "IN R");
 		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(BAY_XL, 26.f)), module, CoronalAnnihilator::INL_INPUT));
 		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(BAY_XR, 26.f)), module, CoronalAnnihilator::INR_INPUT));
-		addLabel(Vec(181.2f, 32.6f), "SOURCE");
-		addLabel(Vec(173.7f, 38.f), "IN", eclipse::FINE_SIZE);
-		addParam(createParamCentered<eclipse::CKSSHorizontal>(mm2px(Vec(181.2f, 38.f)), module, CoronalAnnihilator::SOURCE_PARAM));
-		addLabel(Vec(189.f, 38.f), "OSC", eclipse::FINE_SIZE);
+		addLabel(Vec(BAY_XL, 33.3f), "SOURCE");
+		addLabel(Vec(165.f, 39.5f), "IN", eclipse::FINE_SIZE);
+		addParam(createParamCentered<RoundSmallBlackKnob>(mm2px(Vec(BAY_XL, 39.5f)), module, CoronalAnnihilator::SOURCE_PARAM));
+		addLabel(Vec(178.8f, 39.5f), "OSC", eclipse::FINE_SIZE);
+		addLabel(Vec(BAY_XR, 33.3f), "SRC CV");
+		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(BAY_XR, 39.5f)), module, CoronalAnnihilator::SOURCE_INPUT));
 
 		static const float ROW_Y[4] = {52.f, 66.f, 80.f, 94.f};
 		struct BayEntry {

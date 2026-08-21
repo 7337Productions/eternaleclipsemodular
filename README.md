@@ -104,8 +104,8 @@ aspect width, and TIME/WARP runs the real sky or time-lapse up to ×10⁸.
 
 ![Coronal Annihilator](docs/images/CoronalAnnihilator.png)
 
-Stereo synth voice in three stages. The source is either the external stereo input (R
-normalled to L) or the onboard dual oscillator: CORE (sine, triangle or saw) drives
+Stereo synth voice in three stages. SOURCE blends (with CV) between the external
+stereo input (R normalled to L) and the onboard dual oscillator: CORE (sine, triangle or saw) drives
 FLARE through SURGE (linear through-zero or exponential FM), LOCK (soft or hard sync)
 and TRACK (FLARE follows CORE's V/oct), while FLARE itself is shaped by PLASMA
 (sine → triangle → saw → pulse morph), ARC (phase warp) and EJECTA (wavefolding).

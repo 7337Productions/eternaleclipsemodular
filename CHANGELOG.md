@@ -19,8 +19,8 @@
 
 - New module: Coronal Annihilator — stereo synth voice. CORE/FLARE dual
   oscillator (through-zero and exponential FM, soft/hard sync, shape
-  morph, phase warp, wavefolding, mix and stereo spread) or external
-  stereo input, into an onboard neural amp model player (.nam files,
+  morph, phase warp, wavefolding, mix and stereo spread) blended with
+  the external stereo input under CV, into an onboard neural amp model player (.nam files,
   one network per channel, mono-network and loudness-normalization
   options, load from panel, menu or file drop), into a saturating
   4-pole lowpass with 12/24 dB slopes, resonance and key tracking.

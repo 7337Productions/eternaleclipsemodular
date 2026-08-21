@@ -51,7 +51,7 @@
     {
       "slug": "CoronalAnnihilator",
       "name": "Coronal Annihilator",
-      "description": "Stereo voice: a complex dual oscillator (CORE drives FLARE with FM, sync, wavefolding and phase warp) or an external stereo input, through an onboard neural amp model (.nam, one network per channel) and a saturating 4-pole lowpass with 12/24 dB slopes.",
+      "description": "Stereo voice: a complex dual oscillator (CORE drives FLARE with FM, sync, wavefolding and phase warp) blended with an external stereo input, through an onboard neural amp model (.nam, one network per channel) and a saturating 4-pole lowpass with 12/24 dB slopes.",
       "tags": ["Synth voice", "Oscillator", "Filter", "Distortion"]
     },
     {
