@@ -39,19 +39,19 @@
     <path d="M 99.1,120.5 L 99.1,122.9 L 96.7,122.9"/>
   </g>
 
-  <!-- Leviathan's Cross: stem through SPEED and LOOP into the lemniscate's
+  <!-- Leviathan's Cross: stem through LOOP and SPEED into the lemniscate's
        crossing (TURN), crossbars behind each knob. Gaps clear the runtime labels. -->
   <g stroke="#ffc464" stroke-opacity="0.7" stroke-width="0.5" stroke-linecap="round">
-    <line x1="36" y1="25.0" x2="36" y2="52.3"/>
-    <line x1="36" y1="57.3" x2="36" y2="72.1"/>
-    <line x1="36" y1="77.1" x2="36" y2="84.0"/>
-    <line x1="20" y1="38.5" x2="52" y2="38.5"/>
-    <line x1="14" y1="65.0" x2="58" y2="65.0"/>
+    <line x1="36" y1="25.0" x2="36" y2="40.3"/>
+    <line x1="36" y1="45.7" x2="36" y2="74.1"/>
+    <line x1="36" y1="79.1" x2="36" y2="85.0"/>
+    <line x1="20" y1="33.0" x2="52" y2="33.0"/>
+    <line x1="14" y1="60.5" x2="58" y2="60.5"/>
   </g>
 
   <!-- Litany wheel sigil around the SPEED knob (Abyssal Harmonics red):
        ring of 13 tick strokes, the turning cycle of recitations -->
-  <g transform="translate(36 38.5)" stroke="#ff0000" stroke-opacity="0.85" fill="none">
+  <g transform="translate(36 60.5)" stroke="#ff0000" stroke-opacity="0.85" fill="none">
     <circle cx="0" cy="0" r="12.1" stroke-width="0.35"/>
     <g stroke-width="0.45">
       <line x1="0.000" y1="-11.400" x2="0.000" y2="-13.800"/>

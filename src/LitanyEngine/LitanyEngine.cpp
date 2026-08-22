@@ -353,21 +353,21 @@ struct LitanyEngineWidget : ModuleWidget {
 		addChild(display);
 
 		// Varispeed: the huge knob inside the sigil ring (ring in the panel SVG)
-		addParam(createParamCentered<RoundHugeBlackKnob>(mm2px(Vec(LX, 38.5f)), module, LitanyEngine::SPEED_PARAM));
-		addLabel(Vec(LX, 54.8f), "SPEED", eclipse::LABEL_SIZE, eclipse::ACCENT_COLOR);
+		addParam(createParamCentered<RoundHugeBlackKnob>(mm2px(Vec(LX, 60.5f)), module, LitanyEngine::SPEED_PARAM));
+		addLabel(Vec(LX, 76.6f), "SPEED", eclipse::LABEL_SIZE, eclipse::ACCENT_COLOR);
 
-		addParam(createParamCentered<RoundBigBlackKnob>(mm2px(Vec(LX, 65.f)), module, LitanyEngine::LOOP_PARAM));
-		addLabel(Vec(LX, 74.6f), "LOOP");
+		addParam(createParamCentered<RoundBigBlackKnob>(mm2px(Vec(LX, 33.f)), module, LitanyEngine::LOOP_PARAM));
+		addLabel(Vec(LX, 43.f), "LOOP");
 
 		// Tape-loop lemniscate, TURN at the head
 		LemniscateDisplay* tape = new LemniscateDisplay;
 		tape->module = module;
-		tape->box.pos = mm2px(Vec(LX - 23.f, 84.f - 9.f));
+		tape->box.pos = mm2px(Vec(LX - 23.f, 85.f - 9.f));
 		tape->box.size = mm2px(Vec(46.f, 18.f));
 		addChild(tape);
-		addParam(createLightParamCentered<VCVLightBezel<RedLight>>(mm2px(Vec(LX, 84.f)), module,
+		addParam(createLightParamCentered<VCVLightBezel<RedLight>>(mm2px(Vec(LX, 85.f)), module,
 			LitanyEngine::ADVANCE_PARAM, LitanyEngine::ADVANCE_LIGHT));
-		addLabel(Vec(LX, 91.f), "TURN");
+		addLabel(Vec(LX, 92.f), "TURN");
 
 		// Grain row
 		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(14.f, 100.f)), module, LitanyEngine::GRAIN_PARAM));
