@@ -2,8 +2,7 @@
 
 These WAV files ARE the Litany Engine's sample content. The module has no file
 dialog and no drag-and-drop by design (Gristleism ethos): the shipped loops are
-the instrument. The current files are synthesized placeholders from
-`tools/gen_litany_placeholders.py` — replace them with the final branded loops.
+the instrument.
 
 ## Drop-in contract
 

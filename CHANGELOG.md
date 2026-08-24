@@ -10,8 +10,7 @@
   stereo pan spread. Loop display with playhead, TURN/TRIG loop
   advance, EOC pulse output, CV with attenuverters on the five main
   controls. Loops decode once on a background thread and are shared by
-  all instances. Current bank is placeholder material — final branded
-  loops drop into res/litany/ (see the README there for the contract).
+  all instances. Ships with the first eight branded loops.
 - Vendored dr_wav v0.14.6 under dep/ (public domain / MIT-0, see
   dep/dr_wav/PATCHES.md).
 
