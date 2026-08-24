@@ -15,6 +15,23 @@
 - Vendored dr_wav v0.14.6 under dep/ (public domain / MIT-0, see
   dep/dr_wav/PATCHES.md).
 
+- Liminal Vast, the hugeness pass: diffusion allpasses inside the
+  feedback loop (DENSITY now thickens the tail itself, not just the
+  input), doubled maximum room size, a second slower LFO per line for
+  a washier shimmer, DECAY that pins to infinity at the top of the
+  knob, and a FREEZE button with gate input that holds the tail at
+  unity feedback. Note: existing patches will sound larger at the same
+  SIZE setting — the whole knob range grew upward.
+- Liminal Vast display is now alive (GitHub #1): the eclipse's corona
+  glows with the tail's energy and reaches with SIZE, and embers drift
+  continuously from the rim, swelling with the incoming signal level —
+  rate from DENSITY, travel from SIZE, lifetime from DECAY; frozen
+  embers orbit the disc.
+- Liminal Vast fixes: delay reads clamped for engine rates above
+  192 kHz, DENSITY sweeps through zero without a click, reset now
+  clears all modulation and smoothing state, and sample-rate changes
+  clear the tail instead of warping it.
+
 ## 2.8.0 (2026-08-19)
 
 - New module: Coronal Annihilator — stereo synth voice. CORE/FLARE dual
