@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.9.0 (2026-08-20)
+## 2.9.0 (2026-08-24)
 
 - New module: Litany Engine — looping sample player with a fixed bank of
   onboard loops (Buddha Machine ethos: no file loading, the shipped
