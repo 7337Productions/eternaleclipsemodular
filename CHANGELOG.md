@@ -10,7 +10,7 @@
   stereo pan spread. Loop display with playhead, TURN/TRIG loop
   advance, EOC pulse output, CV with attenuverters on the five main
   controls. Loops decode once on a background thread and are shared by
-  all instances. Ships with the first eight branded loops. Hybrid banks:
+  all instances. Ships with ten branded loops. Hybrid banks:
   "Load sample folder" swaps in a user folder of WAVs per instance
   (worker-thread decode, atomic swap, missing-folder states, path saved
   in the patch), "Restore onboard litany" returns; strict guardrails
