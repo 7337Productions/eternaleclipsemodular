@@ -1,9 +1,14 @@
-// Litany Engine (OMN-90): fixed-bank looping sample player with a focused
-// granular layer. Gristleism / Buddha Machine ethos -- the loops shipped in
-// res/litany/ are the instrument (no user loading) -- crossed with a
+// Litany Engine (OMN-90): looping sample player with a focused granular
+// layer. Hybrid banks: the loops shipped in res/litany/ are the instrument
+// out of the box (Gristleism / Buddha Machine ethos), and "Load sample
+// folder..." swaps in the user's own bank per instance -- crossed with a
 // Morphagene-style tape/microsound voice. Stereo companion to the Coronal
 // Annihilator's external input.
 #define DR_WAV_IMPLEMENTATION
+#include <atomic>
+#include <mutex>
+#include <thread>
+#include <osdialog.h>
 #include "plugin.hpp"
 #include "EclipseWidgets.hpp"
 #include "LitanyEngine/dsp/SampleBank.hpp"
@@ -46,6 +51,9 @@ struct LitanyEngine : Module {
 		LIGHTS_LEN
 	};
 
+	// Bank load states (mirrors the Coronal Annihilator's model loader)
+	enum LoadState { LOAD_ONBOARD, LOAD_LOADING, LOAD_OK, LOAD_MISSING, LOAD_BAD };
+
 	litany::GranularEngine engine;
 	dsp::SchmittTrigger trigTrigger;
 	dsp::SchmittTrigger buttonTrigger;
@@ -53,16 +61,31 @@ struct LitanyEngine : Module {
 	std::atomic<float> loopPhase{0.f};
 	std::atomic<float> playSpeed{1.f};
 
+	// ----- user bank ownership -----
+	// activeBank is owned by the audio thread (NULL = onboard litany). The
+	// loader thread parks a fully decoded bank in pendingBank; process()
+	// swaps it in after killing every grain (grains hold buffer pointers),
+	// and parks the old bank in retiredBank for the widget's step() to free.
+	litany::UserBank* activeBank = NULL;
+	std::atomic<litany::UserBank*> pendingBank{NULL};
+	std::atomic<litany::UserBank*> retiredBank{NULL};
+	std::atomic<bool> clearRequested{false};
+	std::thread loader;
+	std::atomic<int> loadState{LOAD_ONBOARD};
+	std::string folderPath; // UI thread
+	std::mutex nameMutex;
+	std::vector<std::string> loopNames; // for the LOOP knob + display
+	std::string bankInfo;               // context-menu summary
+
 	LitanyEngine() {
 		config(PARAMS_LEN, INPUTS_LEN, OUTPUTS_LEN, LIGHTS_LEN);
 
 		litany::SampleBank& bank = litany::SampleBank::get();
 		bank.ensureLoaded();
+		loopNames = bank.names();
 		int count = (int)bank.count();
-		if (count > 0)
-			configSwitch(LOOP_PARAM, 0.f, count - 1, 0.f, "Loop", bank.names());
-		else
-			configSwitch(LOOP_PARAM, 0.f, 0.f, 0.f, "Loop", {"(no loops)"});
+		configParam<LoopQuantity>(LOOP_PARAM, 0.f, std::max(count - 1, 0), 0.f, "Loop");
+		paramQuantities[LOOP_PARAM]->snapEnabled = true;
 
 		configParam(SPEED_PARAM, -2.f, 2.f, 1.f, "Speed", "x");
 		configParam(GRAIN_PARAM, 0.f, 1.f, 0.f, "Grain size");
@@ -98,7 +121,69 @@ struct LitanyEngine : Module {
 	}
 
 	int loopCount() {
-		return (int)litany::SampleBank::get().count();
+		return activeBank ? (int)activeBank->count() : (int)litany::SampleBank::get().count();
+	}
+
+	// The LOOP knob names the current bank's loops (UI thread)
+	struct LoopQuantity : ParamQuantity {
+		std::string getDisplayValueString() override {
+			LitanyEngine* m = dynamic_cast<LitanyEngine*>(module);
+			if (!m)
+				return "";
+			int i = (int)std::round(getValue());
+			std::lock_guard<std::mutex> lock(m->nameMutex);
+			if (i < 0 || i >= (int)m->loopNames.size())
+				return "(no loops)";
+			return m->loopNames[i];
+		}
+	};
+
+	std::string loopName(int i) {
+		std::lock_guard<std::mutex> lock(nameMutex);
+		if (i < 0 || i >= (int)loopNames.size())
+			return "";
+		return loopNames[i];
+	}
+
+	std::string getBankInfo() {
+		std::lock_guard<std::mutex> lock(nameMutex);
+		return bankInfo;
+	}
+
+	void setNames(const std::vector<std::string>& names, const std::string& info) {
+		std::lock_guard<std::mutex> lock(nameMutex);
+		loopNames = names;
+		bankInfo = info;
+	}
+
+	// ----- user bank loading (UI / patch-load thread) -----
+	void requestLoad(const std::string& dir) {
+		if (loader.joinable())
+			loader.join();
+		folderPath = dir;
+		if (dir.empty()) {
+			delete pendingBank.exchange(NULL);
+			clearRequested = true;
+			loadState = LOAD_ONBOARD;
+			setNames(litany::SampleBank::get().names(), "");
+			return;
+		}
+		loadState = LOAD_LOADING;
+		loader = std::thread([this, dir]() {
+			std::string error;
+			litany::UserBank* b = litany::UserBank::load(dir, error);
+			if (!b) {
+				loadState = (error == "missing") ? LOAD_MISSING : LOAD_BAD;
+				return;
+			}
+			std::string info = string::f("%d loop%s Â· %.0f MB",
+				(int)b->count(), b->count() == 1 ? "" : "s", b->totalBytes / 1048576.0);
+			if (b->skipped > 0)
+				info += string::f(" Â· %d file%s skipped by guardrails", b->skipped, b->skipped == 1 ? "" : "s");
+			setNames(b->names(), info);
+			delete pendingBank.exchange(b);
+			loadState = LOAD_OK;
+		});
 	}
 
 	int currentLoop() {
@@ -111,7 +196,61 @@ struct LitanyEngine : Module {
 			params[LOOP_PARAM].setValue((currentLoop() + 1) % count);
 	}
 
+	~LitanyEngine() override {
+		if (loader.joinable())
+			loader.join();
+		delete pendingBank.exchange(NULL);
+		delete retiredBank.exchange(NULL);
+		delete activeBank;
+	}
+
+	void retire(litany::UserBank* b) {
+		if (!b)
+			return;
+		litany::UserBank* expected = NULL;
+		if (!retiredBank.compare_exchange_strong(expected, b))
+			delete b; // slot occupied (no widget to drain it): free inline
+	}
+
+	void applyBankCount() {
+		int count = loopCount();
+		paramQuantities[LOOP_PARAM]->maxValue = std::max(count - 1, 0);
+		if (currentLoop() >= count)
+			params[LOOP_PARAM].setValue(0.f);
+	}
+
+	json_t* dataToJson() override {
+		json_t* rootJ = json_object();
+		json_object_set_new(rootJ, "folderPath", json_string(folderPath.c_str()));
+		return rootJ;
+	}
+
+	void dataFromJson(json_t* rootJ) override {
+		json_t* pathJ = json_object_get(rootJ, "folderPath");
+		if (pathJ) {
+			std::string dir = json_string_value(pathJ);
+			if (!dir.empty())
+				requestLoad(dir);
+		}
+	}
+
 	void process(const ProcessArgs& args) override {
+		// ===== Bank hand-off =====
+		// Kill every grain before the old bank leaves: grains hold raw
+		// pointers into its buffers, and the widget will free it.
+		if (clearRequested.exchange(false)) {
+			engine.reset();
+			retire(activeBank);
+			activeBank = NULL;
+			applyBankCount();
+		}
+		if (litany::UserBank* b = pendingBank.exchange(NULL)) {
+			engine.reset();
+			retire(activeBank);
+			activeBank = b;
+			applyBankCount();
+		}
+
 		// Loop advance: button, trigger input, or the display (UI thread)
 		bool adv = false;
 		adv |= buttonTrigger.process(params[ADVANCE_PARAM].getValue() > 0.5f);
@@ -119,9 +258,10 @@ struct LitanyEngine : Module {
 		if (adv)
 			advanceLoop();
 
-		litany::SampleBank& bank = litany::SampleBank::get();
 		litany::LoopView view;
-		const litany::Loop* lp = bank.loop(currentLoop());
+		const litany::Loop* lp = activeBank
+			? activeBank->loop(currentLoop())
+			: litany::SampleBank::get().loop(currentLoop());
 		if (lp && lp->ready.load(std::memory_order_acquire) && lp->frames > 1) {
 			view.l = lp->l.data();
 			view.r = lp->r.data();
@@ -167,24 +307,32 @@ struct LoopDisplay : TransparentWidget {
 	void drawLayer(const DrawArgs& args, int layer) override {
 		if (layer != 1)
 			return;
-		litany::SampleBank& bank = litany::SampleBank::get();
 		NVGcolor color = eclipse::ACCENT_COLOR;
 		float phase = 0.f;
-		// Browser preview (no module): show the first loop of the bank
-		const litany::Loop* first = bank.loop(0);
+		// Browser preview (no module): show the first loop of the onboard bank
+		const litany::Loop* first = litany::SampleBank::get().loop(0);
 		std::string text = first ? first->name : "NO LOOPS";
 		if (module) {
-			const litany::Loop* lp = bank.loop(module->currentLoop());
-			if (!lp) {
+			int state = module->loadState.load();
+			std::string name = module->loopName(module->currentLoop());
+			if (state == LitanyEngine::LOAD_LOADING) {
+				text = "LOADING FOLDER";
+				color = eclipse::LABEL_COLOR;
+			}
+			else if (state == LitanyEngine::LOAD_MISSING) {
+				text = "FOLDER MISSING";
+				color = eclipse::LABEL_COLOR;
+			}
+			else if (state == LitanyEngine::LOAD_BAD) {
+				text = "NO WAVS IN FOLDER";
+				color = eclipse::LABEL_COLOR;
+			}
+			else if (name.empty()) {
 				text = "NO LOOPS";
 				color = eclipse::LABEL_COLOR;
 			}
-			else if (!lp->ready.load(std::memory_order_acquire)) {
-				text = "LOADING";
-				color = eclipse::LABEL_COLOR;
-			}
 			else {
-				text = lp->name;
+				text = name;
 				phase = module->loopPhase.load(std::memory_order_relaxed);
 			}
 		}
@@ -399,6 +547,40 @@ struct LitanyEngineWidget : ModuleWidget {
 		addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(BX - 6.f, 112.f)), module, LitanyEngine::OUTL_OUTPUT));
 		addLabel(Vec(BX + 6.f, 106.3f), "OUT R", eclipse::LABEL_SIZE, eclipse::ACCENT_COLOR);
 		addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(BX + 6.f, 112.f)), module, LitanyEngine::OUTR_OUTPUT));
+	}
+
+	void step() override {
+		ModuleWidget::step();
+		LitanyEngine* m = getModule<LitanyEngine>();
+		if (m)
+			delete m->retiredBank.exchange(NULL);
+	}
+
+	static void openFolderDialog(LitanyEngine* module) {
+		std::string dir = module->folderPath.empty() ? asset::user("") : module->folderPath;
+		char* pathC = osdialog_file(OSDIALOG_OPEN_DIR, dir.c_str(), NULL, NULL);
+		if (!pathC)
+			return;
+		std::string path = pathC;
+		std::free(pathC);
+		module->requestLoad(path);
+	}
+
+	void appendContextMenu(Menu* menu) override {
+		LitanyEngine* module = getModule<LitanyEngine>();
+		menu->addChild(new MenuSeparator);
+		menu->addChild(createMenuLabel("Sample bank"));
+		menu->addChild(createMenuItem("Load sample folder (.wav)...", "", [module]() {
+			openFolderDialog(module);
+		}));
+		menu->addChild(createMenuItem("Restore onboard litany", "", [module]() {
+			module->requestLoad("");
+		}, module->folderPath.empty()));
+		std::string info = module->getBankInfo();
+		if (!info.empty())
+			menu->addChild(createMenuLabel(info));
+		menu->addChild(createMenuLabel(string::f("Folder limits: %d files, %.0f s/file, %d MB",
+			litany::MAX_FILES, litany::MAX_SECONDS_PER_FILE, (int)(litany::MAX_TOTAL_BYTES >> 20))));
 	}
 };
 

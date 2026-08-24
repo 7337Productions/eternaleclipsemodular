@@ -129,8 +129,11 @@ differs from the engine's).
 
 ![Litany Engine](docs/images/LitanyEngine.png)
 
-Looping sample player in the spirit of the Buddha Machine: a fixed litany of
-onboard loops is the instrument — there is no file loading, by design. LOOP selects
+Looping sample player in the spirit of the Buddha Machine: the litany of onboard
+loops is the instrument out of the box, and "Load sample folder" in the right-click
+menu swaps in your own bank of WAVs per instance ("Restore onboard litany" returns).
+User folders are read under strict limits (99 files, 60 s per file, 192 MB per bank,
+16-bit in RAM) so a stray folder of stems can't eat your session's memory. LOOP selects
 a loop (the display names it and traces the playhead), and TURN, the display, or a
 trigger at TRIG steps to the next one. SPEED and LOOP stand on the stem of a gold
 Leviathan's Cross whose infinity is the tape path, TURN at its crossing as the head:

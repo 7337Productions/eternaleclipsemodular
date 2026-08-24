@@ -21,14 +21,17 @@
 // born at, exactly like material passing a real varispeed head.
 namespace litany {
 
-// Read-only view of a decoded loop. The underlying buffers are owned by the
-// SampleBank and live for the plugin's lifetime, so grains may safely keep a
-// view of a loop the module has already switched away from.
+// Read-only view of a decoded loop (int16 storage, scaled on read). Grains
+// may keep a view of a loop the module has switched away from, so a bank's
+// buffers must outlive every grain that could reference them: the onboard
+// bank lives until plugin unload, and the module kills all grains
+// (engine.reset()) before retiring a user bank.
 struct LoopView {
-	const float* l = nullptr;
-	const float* r = nullptr;
+	const int16_t* l = nullptr;
+	const int16_t* r = nullptr;
 	size_t frames = 0;
 	float fileRate = 48000.f;
+	float scale = 1.f / 32768.f;
 
 	bool valid() const { return l && r && frames > 1; }
 };
@@ -162,7 +165,7 @@ private:
 	double headPhase = 0.0;
 	double countdownSrc = 0.0;
 	float lastScan = -1.f;
-	const float* curData = nullptr;
+	const int16_t* curData = nullptr;
 	uint32_t rngState = 0x9e3779b9u;
 
 	float bipolarRand() {
@@ -259,8 +262,10 @@ private:
 				i0 = g.src.frames - 1;
 			const size_t i1 = (i0 + 1 < g.src.frames) ? i0 + 1 : 0;
 			const float frac = (float)(g.pos - (double)i0);
-			const float sl = g.src.l[i0] + (g.src.l[i1] - g.src.l[i0]) * frac;
-			const float sr = g.src.r[i0] + (g.src.r[i1] - g.src.r[i0]) * frac;
+			const float l0 = (float)g.src.l[i0], l1 = (float)g.src.l[i1];
+			const float r0 = (float)g.src.r[i0], r1 = (float)g.src.r[i1];
+			const float sl = (l0 + (l1 - l0) * frac) * g.src.scale;
+			const float sr = (r0 + (r1 - r0) * frac) * g.src.scale;
 
 			out.l += sl * w * g.gainL;
 			out.r += sr * w * g.gainR;

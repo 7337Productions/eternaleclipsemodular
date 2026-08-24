@@ -57,7 +57,7 @@
     {
       "slug": "LitanyEngine",
       "name": "Litany Engine",
-      "description": "Looping sample player with a fixed litany of onboard loops and a focused granular engine: through-zero varispeed, grain size from whole-loop down to 15 ms, morphing overlap, scan and texture spray; stereo companion to the Coronal Annihilator's external input.",
+      "description": "Looping sample player with an onboard litany of loops and a focused granular engine — or load your own sample folder: through-zero varispeed, grain size from whole-loop down to 15 ms, morphing overlap, scan and texture spray; stereo companion to the Coronal Annihilator's external input.",
       "tags": ["Sampler", "Granular"]
     }
   ]

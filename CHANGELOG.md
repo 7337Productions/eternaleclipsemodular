@@ -10,7 +10,12 @@
   stereo pan spread. Loop display with playhead, TURN/TRIG loop
   advance, EOC pulse output, CV with attenuverters on the five main
   controls. Loops decode once on a background thread and are shared by
-  all instances. Ships with the first eight branded loops.
+  all instances. Ships with the first eight branded loops. Hybrid banks:
+  "Load sample folder" swaps in a user folder of WAVs per instance
+  (worker-thread decode, atomic swap, missing-folder states, path saved
+  in the patch), "Restore onboard litany" returns; strict guardrails
+  (99 files, 60 s/file truncation, 192 MB/bank, int16 storage) bound
+  memory against arbitrary folders.
 - Vendored dr_wav v0.14.6 under dep/ (public domain / MIT-0, see
   dep/dr_wav/PATCHES.md).
 
