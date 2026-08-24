@@ -112,8 +112,9 @@ and TRACK (FLARE follows CORE's V/oct), while FLARE itself is shaped by PLASMA
 MIX balances the two and SPREAD places CORE left and FLARE right. The NEURAL stage
 plays a neural amp model (.nam file — load one from the panel button, the display,
 the context menu, or by dropping the file on the module) with one network per
-channel, DRIVE into it and LEVEL out; the menu offers a mono-network mode (half the
-CPU) and loudness normalization. UMBRA is a saturating 4-pole lowpass with resonance
+channel, DRIVE into it and a WET/DRY blend out (the dry arm is latency-aligned, so
+any blend position stays comb-free), both with CV; the menu offers a mono-network
+mode (half the CPU) and loudness normalization. UMBRA is a saturating 4-pole lowpass with resonance
 into self-oscillation, 12 or 24 dB slopes, CV and key tracking. Every main control
 has a CV input with an attenuverter. Models are not bundled — bring your own
 captures; the stage passes signal through until one is loaded. Note that the neural

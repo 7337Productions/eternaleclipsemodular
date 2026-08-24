@@ -33,7 +33,7 @@ struct CoronalAnnihilator : Module {
 		SPREAD_PARAM,
 		SOURCE_PARAM,
 		DRIVE_PARAM,
-		LEVEL_PARAM,
+		WETDRY_PARAM, // was LEVEL_PARAM (same slot)
 		NEURAL_ACTIVE_PARAM,
 		CUTOFF_PARAM,
 		RES_PARAM,
@@ -64,6 +64,8 @@ struct CoronalAnnihilator : Module {
 		CUTOFF_INPUT,
 		RES_INPUT,
 		SOURCE_INPUT,
+		DRIVE_INPUT,
+		WETDRY_INPUT,
 		INPUTS_LEN
 	};
 	enum OutputId {
@@ -108,7 +110,6 @@ struct CoronalAnnihilator : Module {
 	// Memoized transcendentals: recomputed only when their inputs change,
 	// so knob-set values cost one compare per sample instead of pow/exp/cos
 	float driveMemoDb = NAN, driveGain = 1.f;
-	float levelMemoDb = NAN, levelGain = 1.f;
 	float mixMemo = NAN, mixGA = 1.f, mixGB = 0.f;
 	float srcMemo = NAN, srcGIn = 0.f, srcGOsc = 1.f;
 	float expAMemo = NAN, freqAMemo = 261.63f;
@@ -135,7 +136,7 @@ struct CoronalAnnihilator : Module {
 		configParam(SPREAD_PARAM, 0.f, 1.f, 0.5f, "Spread (Core left / Flare right)", "%", 0.f, 100.f);
 		configParam(SOURCE_PARAM, 0.f, 1.f, 1.f, "Source (stereo input ← / oscillators →)", "%", 0.f, 100.f);
 		configParam(DRIVE_PARAM, -30.f, 18.f, -12.f, "Drive (neural model input)", " dB");
-		configParam(LEVEL_PARAM, -24.f, 24.f, 0.f, "Level (neural model output)", " dB");
+		configParam(WETDRY_PARAM, 0.f, 1.f, 1.f, "Wet/dry (neural stage, latency-aligned dry)", "%", 0.f, 100.f);
 		configSwitch(NEURAL_ACTIVE_PARAM, 0.f, 1.f, 1.f, "Neural stage", {"Bypassed", "Active"});
 		configParam(CUTOFF_PARAM, 0.f, 1.f, 1.f, "Umbra cutoff", " Hz", 1024.f, 20.f);
 		configParam(RES_PARAM, 0.f, 1.f, 0.f, "Umbra resonance", "%", 0.f, 100.f);
@@ -163,6 +164,8 @@ struct CoronalAnnihilator : Module {
 		configInput(CUTOFF_INPUT, "Cutoff CV (1 V/oct)");
 		configInput(RES_INPUT, "Resonance CV");
 		configInput(SOURCE_INPUT, "Source blend CV (10 V = full sweep)");
+		configInput(DRIVE_INPUT, "Drive CV (10 V = full range)");
+		configInput(WETDRY_INPUT, "Wet/dry CV (10 V = full sweep)");
 		configOutput(OUTL_OUTPUT, "Left audio");
 		configOutput(OUTR_OUTPUT, "Right audio");
 		configBypass(INL_INPUT, OUTL_OUTPUT);
@@ -358,26 +361,26 @@ struct CoronalAnnihilator : Module {
 		// ===== Neural stage =====
 		bool neuralActive = params[NEURAL_ACTIVE_PARAM].getValue() > 0.5f;
 		if (neuralActive && activeModel) {
-			float driveDb = params[DRIVE_PARAM].getValue();
+			float driveDb = clampf(params[DRIVE_PARAM].getValue()
+				+ inputs[DRIVE_INPUT].getVoltage() * 4.8f, -30.f, 18.f); // 10 V = the knob's 48 dB range
 			if (driveDb != driveMemoDb) {
 				driveMemoDb = driveDb;
 				driveGain = dbToGain(driveDb);
 			}
-			float levelDb = params[LEVEL_PARAM].getValue();
-			if (levelDb != levelMemoDb) {
-				levelMemoDb = levelDb;
-				levelGain = dbToGain(levelDb);
-			}
+			float wet = clampf(params[WETDRY_PARAM].getValue()
+				+ inputs[WETDRY_INPUT].getVoltage() / 10.f, 0.f, 1.f);
 			if (activeModel != loudMemoModel || normalizeLoudness != loudMemoNorm) {
 				loudMemoModel = activeModel;
 				loudMemoNorm = normalizeLoudness;
 				loudGain = (normalizeLoudness && activeModel->hasLoudness)
 					? dbToGain(-18.f - activeModel->loudness) : 1.f;
 			}
-			float l, r;
-			nam.process(sigL * driveGain, sigR * driveGain, activeModel, monoModel, l, r);
-			sigL = l * levelGain * loudGain;
-			sigR = r * levelGain * loudGain;
+			// Dry rides the same converter/FIFO pipeline, so both blend
+			// arms are sample-aligned at every wet/dry position
+			float l, r, dl, dr;
+			nam.process(sigL * driveGain, sigR * driveGain, sigL, sigR, activeModel, monoModel, l, r, dl, dr);
+			sigL = dl + (l * loudGain - dl) * wet;
+			sigR = dr + (r * loudGain - dr) * wet;
 		}
 		lights[NEURAL_LIGHT].setBrightness(neuralActive && activeModel ? 1.f : (neuralActive ? 0.25f : 0.f));
 
@@ -573,17 +576,19 @@ struct CoronalAnnihilatorWidget : ModuleWidget {
 		display->box.pos = mm2px(Vec(121.f, 20.5f));
 		display->box.size = mm2px(Vec(34.f, 8.f));
 		addChild(display);
-		LoadButton* load = createWidgetCentered<LoadButton>(mm2px(Vec(NX_L, 37.f)));
+		LoadButton* load = createWidgetCentered<LoadButton>(mm2px(Vec(NX_L, 35.5f)));
 		load->module = module;
 		addChild(load);
-		addLabel(Vec(NX_L, 42.4f), "LOAD");
-		addParam(createLightParamCentered<VCVLightBezelLatch<RedLight>>(mm2px(Vec(NX_R, 37.f)), module,
+		addLabel(Vec(NX_L, 40.9f), "LOAD");
+		addParam(createLightParamCentered<VCVLightBezelLatch<RedLight>>(mm2px(Vec(NX_R, 35.5f)), module,
 			CoronalAnnihilator::NEURAL_ACTIVE_PARAM, CoronalAnnihilator::NEURAL_LIGHT));
-		addLabel(Vec(NX_R, 42.4f), "NEURAL");
-		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(NX_L, 55.f)), module, CoronalAnnihilator::DRIVE_PARAM));
-		addLabel(Vec(NX_L, 62.2f), "DRIVE");
-		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(NX_R, 55.f)), module, CoronalAnnihilator::LEVEL_PARAM));
-		addLabel(Vec(NX_R, 62.2f), "LEVEL");
+		addLabel(Vec(NX_R, 40.9f), "NEURAL");
+		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(NX_L, 49.5f)), module, CoronalAnnihilator::DRIVE_PARAM));
+		addLabel(Vec(NX_L, 56.7f), "DRIVE");
+		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(NX_R, 49.5f)), module, CoronalAnnihilator::WETDRY_PARAM));
+		addLabel(Vec(NX_R, 56.7f), "WET/DRY");
+		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(NX_L, 63.f)), module, CoronalAnnihilator::DRIVE_INPUT));
+		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(NX_R, 63.f)), module, CoronalAnnihilator::WETDRY_INPUT));
 
 		// ===== Umbra =====
 		addParam(createParamCentered<RoundBigBlackKnob>(mm2px(Vec(132.5f, 87.f)), module, CoronalAnnihilator::CUTOFF_PARAM));

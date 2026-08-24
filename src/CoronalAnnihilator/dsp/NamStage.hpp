@@ -91,25 +91,28 @@ struct NamModelSet {
 // through a sample-rate converter to the model's rate, through the nets in
 // blocks of BLOCK frames, back through a converter, and out of a FIFO one
 // frame per process() call. Latency: BLOCK frames (+ converter latency when
-// rates differ). All buffers are fixed; configure() is the only allocator.
+// rates differ). A dry stereo pair rides channels 2/3 of the same pipeline
+// (converted but never fed to the nets), so it emerges sample-aligned with
+// the wet signal for comb-free wet/dry blending. All buffers are fixed;
+// configure() is the only allocator.
 struct NamStage {
 	static constexpr int BLOCK = 32;
 	static constexpr int MAX_FRAMES = NamModelSet::MAX_FRAMES;
 	static constexpr int FIFO_SIZE = 4096; // power of two
 	static constexpr int PRIME_SRC = 64;   // extra zero frames when converting rates (covers converter latency + jitter)
 
-	rack::dsp::SampleRateConverter<2> up;    // engine -> model
-	rack::dsp::SampleRateConverter<2> down;  // model -> engine
+	rack::dsp::SampleRateConverter<4> up;    // engine -> model
+	rack::dsp::SampleRateConverter<4> down;  // model -> engine
 	bool converting = false;
 
-	rack::dsp::Frame<2> inBuf[BLOCK];
+	rack::dsp::Frame<4> inBuf[BLOCK];        // wet L/R, dry L/R
 	int inCount = 0;
-	rack::dsp::Frame<2> srcBuf[MAX_FRAMES];  // model-rate frames
-	rack::dsp::Frame<2> backBuf[MAX_FRAMES]; // engine-rate frames after down-conversion
+	rack::dsp::Frame<4> srcBuf[MAX_FRAMES];  // model-rate frames
+	rack::dsp::Frame<4> backBuf[MAX_FRAMES]; // engine-rate frames after down-conversion
 	float namIn[2][MAX_FRAMES];
 	float namOut[2][MAX_FRAMES];
 
-	rack::dsp::Frame<2> fifo[FIFO_SIZE];
+	rack::dsp::Frame<4> fifo[FIFO_SIZE];
 	int fifoHead = 0; // read
 	int fifoTail = 0; // write
 	int underruns = 0;
@@ -140,7 +143,7 @@ struct NamStage {
 		fifoHead = fifoTail = 0;
 		underruns = 0;
 		int prime = converting ? PRIME_SRC : 0;
-		rack::dsp::Frame<2> z = {};
+		rack::dsp::Frame<4> z = {};
 		for (int i = 0; i < prime; i++)
 			fifoPush(z);
 	}
@@ -150,28 +153,35 @@ struct NamStage {
 	}
 
 	// One stereo frame in, one out (+/-1 units, pre-scaled by the caller).
-	void process(float inL, float inR, NamModelSet* m, bool mono, float& outL, float& outR) {
+	// dryL/dryR pass through the same converters and FIFO untouched by the
+	// nets, returned latency-aligned with the wet pair.
+	void process(float inL, float inR, float dryInL, float dryInR, NamModelSet* m, bool mono,
+	             float& outL, float& outR, float& dryOutL, float& dryOutR) {
 		inBuf[inCount].samples[0] = sanitize(inL);
 		inBuf[inCount].samples[1] = sanitize(inR);
+		inBuf[inCount].samples[2] = sanitize(dryInL);
+		inBuf[inCount].samples[3] = sanitize(dryInR);
 		inCount++;
 		if (inCount >= BLOCK) {
 			inCount = 0;
 			runBlock(m, mono);
 		}
 		if (fifoSize() > 0) {
-			rack::dsp::Frame<2> f = fifo[fifoHead];
+			rack::dsp::Frame<4> f = fifo[fifoHead];
 			fifoHead = (fifoHead + 1) & (FIFO_SIZE - 1);
 			outL = f.samples[0];
 			outR = f.samples[1];
+			dryOutL = f.samples[2];
+			dryOutR = f.samples[3];
 		}
 		else {
 			underruns++;
-			outL = outR = 0.f;
+			outL = outR = dryOutL = dryOutR = 0.f;
 		}
 	}
 
 private:
-	void fifoPush(const rack::dsp::Frame<2>& f) {
+	void fifoPush(const rack::dsp::Frame<4>& f) {
 		int next = (fifoTail + 1) & (FIFO_SIZE - 1);
 		if (next == fifoHead)
 			return; // full: drop (cannot happen with sane rates)

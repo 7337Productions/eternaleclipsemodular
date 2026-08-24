@@ -32,6 +32,9 @@
   covering NaN/Inf CV, six engine rates, 600 model-swap cycles and
   a modulation soak with zero underruns or memory growth.
 - Shared widgets: two-position horizontal toggle (eclipse::CKSSHorizontal).
+- Neural stage: LEVEL replaced by a WET/DRY blend whose dry arm rides
+  the same converter pipeline as the wet signal (latency-aligned, no
+  comb filtering at partial blends); DRIVE and WET/DRY gain CV inputs.
 
 ## 2.7.1 (2026-07-10)
 
