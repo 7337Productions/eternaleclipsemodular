@@ -124,6 +124,17 @@ captures; the stage passes signal through until one is loaded. Note that the neu
 path adds a small block latency (32 samples, plus conversion when the model's rate
 differs from the engine's).
 
+A note on CPU: an amp capture is a neural network, and this module runs one per
+channel in real time — a deliberate engineering choice, so expect it to be the
+heaviest module in most racks. A standard-size capture costs roughly a quarter to
+a third of one core in full stereo on a modern machine; the mono-network menu
+option halves that, and lite or LSTM captures cost a small fraction of it.
+Inference runs in 32-sample bursts, so Rack's "max" performance meter will flash
+past 100% even while the audio is perfectly clean — that is the meter catching a
+single burst, not a fault; the average is the number that matters. If your machine
+does struggle: raise the audio buffer to 256 or 512 samples, switch to the mono
+network, or load a lighter capture.
+
 
 ### Litany Engine
 
