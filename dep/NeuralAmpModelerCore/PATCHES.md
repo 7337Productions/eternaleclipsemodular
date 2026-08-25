@@ -17,6 +17,12 @@ where `std::filesystem` is unavailable (introduced in 10.15). So:
 - `NAM/get_dsp.h` / `NAM/get_dsp.cpp`: removed the two `get_dsp(const std::filesystem::path, ...)`
   overloads. The plugin reads the `.nam` file itself and calls `get_dsp(const nlohmann::json&, ...)`.
 
+- `NAM/activations.cpp`, `NAM/get_dsp.cpp`: `std::optional::value()` replaced
+  with `(*opt)` dereference (six sites, all `has_value()`-guarded). Apple's SDK
+  marks `value()` unavailable before macOS 10.13 because its throwing path
+  needs OS support; `operator*` has no availability gate.
+
 Nothing else is modified. Verify after any upgrade:
 
-    grep -rn "filesystem" dep/NeuralAmpModelerCore/NAM   # must print nothing
+    grep -rn "filesystem" dep/NeuralAmpModelerCore/NAM        # must print nothing
+    grep -rn "\.value()" dep/NeuralAmpModelerCore/NAM | grep -v value_or   # must print nothing

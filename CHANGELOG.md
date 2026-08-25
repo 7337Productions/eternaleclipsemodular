@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.9.1 (2026-08-24)
+
+- Fix the mac x64 Library build: six std::optional::value() calls in
+  the vendored NAM sources replaced with guarded dereferences (Apple's
+  SDK gates value() behind macOS 10.13; the toolchain targets 10.9).
+  No functional change on any platform.
+
 ## 2.9.0 (2026-08-24)
 
 - New module: Litany Engine — looping sample player with a fixed bank of

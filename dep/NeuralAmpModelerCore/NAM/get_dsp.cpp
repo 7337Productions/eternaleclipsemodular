@@ -189,11 +189,11 @@ namespace
 void apply_metadata(DSP& dsp, const ModelMetadata& metadata)
 {
   if (metadata.loudness.has_value())
-    dsp.SetLoudness(metadata.loudness.value());
+    dsp.SetLoudness((*metadata.loudness));
   if (metadata.input_level.has_value())
-    dsp.SetInputLevel(metadata.input_level.value());
+    dsp.SetInputLevel((*metadata.input_level));
   if (metadata.output_level.has_value())
-    dsp.SetOutputLevel(metadata.output_level.value());
+    dsp.SetOutputLevel((*metadata.output_level));
 }
 
 } // anonymous namespace

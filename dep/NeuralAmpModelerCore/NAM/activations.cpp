@@ -143,17 +143,17 @@ nam::activations::Activation::Ptr nam::activations::Activation::get_activation(c
     case ActivationType::LeakyReLU:
       if (config.negative_slope.has_value())
       {
-        return std::make_shared<ActivationLeakyReLU>(config.negative_slope.value());
+        return std::make_shared<ActivationLeakyReLU>((*config.negative_slope));
       }
       return _activations["LeakyReLU"];
     case ActivationType::PReLU:
       if (config.negative_slopes.has_value())
       {
-        return std::make_shared<ActivationPReLU>(config.negative_slopes.value());
+        return std::make_shared<ActivationPReLU>((*config.negative_slopes));
       }
       else if (config.negative_slope.has_value())
       {
-        return std::make_shared<ActivationPReLU>(config.negative_slope.value());
+        return std::make_shared<ActivationPReLU>((*config.negative_slope));
       }
       return std::make_shared<ActivationPReLU>(0.01f);
     case ActivationType::LeakyHardtanh:
