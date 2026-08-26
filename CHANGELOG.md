@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.9.2 (2026-08-26)
+
+- Fix the Linux Library build: glibc defines major()/minor() as macros,
+  which broke the vendored NAM Version class member initializers; the
+  macros are now #undef'd in get_dsp.h. No functional change on any
+  platform.
+- CI: every push now builds all four Library platforms (win-x64,
+  lin-x64, mac-x64, mac-arm64) with the Rack plugin toolchain as a
+  pre-submission failsafe.
+
 ## 2.9.1 (2026-08-24)
 
 - Fix the mac x64 Library build: six std::optional::value() calls in

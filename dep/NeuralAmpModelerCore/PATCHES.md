@@ -22,7 +22,16 @@ where `std::filesystem` is unavailable (introduced in 10.15). So:
   marks `value()` unavailable before macOS 10.13 because its throwing path
   needs OS support; `operator*` has no availability gate.
 
+- `NAM/get_dsp.h`: `#undef major` / `#undef minor` before `class Version`. glibc
+  on the toolchain's Linux target defines these as function-like macros (via
+  `<sys/types.h>`), which mangle the `major(major)` / `minor(minor)` member
+  initializers into `gnu_dev_minor(...)` and break the lin-x64 build.
+
 Nothing else is modified. Verify after any upgrade:
 
     grep -rn "filesystem" dep/NeuralAmpModelerCore/NAM        # must print nothing
     grep -rn "\.value()" dep/NeuralAmpModelerCore/NAM | grep -v value_or   # must print nothing
+    grep -rn "undef major" dep/NeuralAmpModelerCore/NAM/get_dsp.h          # must print one line
+
+(CI now builds all four Library platforms on every push — that is the
+authoritative check; the greps are a quick local pre-flight.)

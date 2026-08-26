@@ -7,6 +7,16 @@
 
 #include "dsp.h"
 
+// glibc (via <sys/types.h> on the Rack Library's Linux toolchain) defines
+// major()/minor() as function-like macros, which mangle Version's
+// major(major)/minor(minor) member initializers below.
+#ifdef major
+#undef major
+#endif
+#ifdef minor
+#undef minor
+#endif
+
 namespace nam
 {
 enum class Supported
